@@ -3,7 +3,7 @@ Arandela-Galindon OOP Final Project
 
 ## ✨ Description
 
-EduTask is a student productivity web app designed to help learners organize their academic tasks and manage deadlines in one simple platform. Users can create and categorize tasks by subject, set priorities and due dates, track progress, and stay focused using a built-in Pomodoro timer. With its clean and beginner-friendly interface, EduTask helps students improve productivity, stay organized, and manage their school workload more efficiently. 
+EduTask is a student productivity web app designed to help learners organize their academic tasks and manage deadlines in one simple platform. Users can create and categorize tasks by subject, set priorities and due dates, track progress, and stay focused using a built-in Pomodoro timer. EduTask helps students improve productivity, stay organized, and manage their school workload more efficiently. 
 
 -----
 
