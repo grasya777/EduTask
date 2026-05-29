@@ -1,13 +1,13 @@
-package com.edutask.interim;
+package com.edutask;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class InterimApplication {
+public class EduTaskApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(InterimApplication.class, args);
+		SpringApplication.run(EduTaskApplication.class, args);
 	}
 
 }
