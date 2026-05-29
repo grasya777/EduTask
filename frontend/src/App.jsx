@@ -9,6 +9,7 @@ import {
   fetchFocusSessions,
   fetchSubjects,
   fetchTasks,
+  fetchUsers,
   createTask,
   updateTask,
   deleteTask,
@@ -46,15 +47,26 @@ function App() {
       return
     }
 
-    const loadData = async () => {
+    const verifyAndLoadData = async () => {
       setLoading(true)
       setError('')
       try {
+        const users = await fetchUsers()
+        const validUser = users.find((user) => user.id === currentUser.id)
+
+        if (!validUser) {
+          setError('Your session is no longer valid. Please sign in again.')
+          setCurrentUser(null)
+          localStorage.removeItem('edu-user')
+          return
+        }
+
         const [taskData, subjectData, sessionData] = await Promise.all([
           fetchTasks(),
           fetchSubjects(),
           fetchFocusSessions(),
         ])
+
         setTasks(taskData)
         setSubjects(subjectData)
         setSessions(sessionData)
@@ -66,7 +78,7 @@ function App() {
       }
     }
 
-    loadData()
+    verifyAndLoadData()
   }, [currentUser])
 
   const saveUser = (user) => {
@@ -167,7 +179,7 @@ function App() {
                   </div>
                 </div>
                 <button type="button" className="sidebar-toggle" onClick={toggleSidebar} aria-label={`${sidebarOpen ? 'Collapse' : 'Expand'} menu`}>
-                  <span className="toggle-icon">⚡</span>
+                  <span className="toggle-icon">{sidebarOpen ? '←' : '→'}</span>
                 </button>
               </div>
               <nav className="side-nav-links">

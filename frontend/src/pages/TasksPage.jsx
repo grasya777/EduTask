@@ -15,20 +15,54 @@ const priorityLabels = {
   CHILL: 'Chill',
 }
 
-export default function TasksPage({ user, tasks, subjects, onCreateTask, onUpdateTask, onDeleteTask, onCompleteTask, onReloadTasks }) {
+const statusLabels = {
+  PENDING: 'To Do',
+  COMPLETED: 'Done',
+  IN_PROGRESS: 'In Progress',
+}
+
+const statusIcon = {
+  COMPLETED: '✅',
+  IN_PROGRESS: '⏳',
+  PENDING: '⚪',
+}
+
+export default function TasksPage({ user, tasks, subjects, onCreateTask, onUpdateTask, onDeleteTask, onCompleteTask }) {
   const [taskForm, setTaskForm] = useState(initialTask)
   const [editing, setEditing] = useState(null)
+  const [showForm, setShowForm] = useState(false)
+  const [searchQuery, setSearchQuery] = useState('')
   const [filterSubject, setFilterSubject] = useState('all')
   const [filterPriority, setFilterPriority] = useState('all')
+  const [filterStatus, setFilterStatus] = useState('all')
+  const [sortOption, setSortOption] = useState('dueDate')
 
-  const userTasks = useMemo(() => tasks.filter((task) => task.user?.id === user.id), [tasks, user.id])
+  const userTasks = tasks.filter((task) => task.user?.id === user.id)
+
   const filteredTasks = useMemo(() => {
-    return userTasks.filter((task) => {
-      const subjectMatch = filterSubject === 'all' || task.subject?.id?.toString() === filterSubject
-      const priorityMatch = filterPriority === 'all' || task.priority === filterPriority
-      return subjectMatch && priorityMatch
-    })
-  }, [userTasks, filterSubject, filterPriority])
+    return userTasks
+      .filter((task) => {
+        const subjectMatch = filterSubject === 'all' || task.subject?.id?.toString() === filterSubject
+        const priorityMatch = filterPriority === 'all' || task.priority === filterPriority
+        const statusMatch = filterStatus === 'all' || task.status === filterStatus
+        const searchMatch = task.title.toLowerCase().includes(searchQuery.toLowerCase()) || task.description.toLowerCase().includes(searchQuery.toLowerCase())
+        return subjectMatch && priorityMatch && statusMatch && searchMatch
+      })
+      .sort((a, b) => {
+        if (sortOption === 'priority') {
+          return a.priority.localeCompare(b.priority)
+        }
+        if (sortOption === 'recent') {
+          return new Date(b.createdAt || b.dueDate || 0) - new Date(a.createdAt || a.dueDate || 0)
+        }
+        if (sortOption === 'dueDate') {
+          if (!a.dueDate) return 1
+          if (!b.dueDate) return -1
+          return new Date(a.dueDate) - new Date(b.dueDate)
+        }
+        return 0
+      })
+  }, [userTasks, searchQuery, filterSubject, filterPriority, filterStatus, sortOption])
 
   const handleChange = (event) => {
     const { name, value } = event.target
@@ -58,6 +92,7 @@ export default function TasksPage({ user, tasks, subjects, onCreateTask, onUpdat
       await onCreateTask(payload)
     }
     resetForm()
+    setShowForm(false)
   }
 
   const handleEdit = (task) => {
@@ -70,56 +105,108 @@ export default function TasksPage({ user, tasks, subjects, onCreateTask, onUpdat
       status: task.status || 'PENDING',
       subjectId: task.subject?.id?.toString() || '',
     })
+    setShowForm(true)
   }
 
-  const statusLabels = {
-    PENDING: 'Pending',
-    COMPLETED: 'Completed',
+  const getSubjectColor = (subject) => {
+    if (!subject) return '#7c3aed'
+    return subject.color || {
+      Science: '#10b981',
+      Mathematics: '#2563eb',
+      History: '#ef4444',
+    }[subject.name] || '#7c3aed'
   }
 
-  const countdownText = (dueDate) => {
-    if (!dueDate) return 'No deadline'
-    const due = new Date(dueDate)
-    const diff = Math.ceil((due - new Date()) / (1000 * 60 * 60 * 24))
-    if (diff < 0) return 'Overdue'
-    if (diff === 0) return 'Today'
-    return `${diff} day${diff === 1 ? '' : 's'}`
+  const formatDate = (date) => {
+    if (!date) return 'No date'
+    return new Date(date).toLocaleDateString(undefined, {
+      month: 'short',
+      day: 'numeric',
+    })
   }
 
   return (
     <main className="page tasks-page">
-      <div className="page-header">
+      <div className="tasks-header">
         <div>
           <p className="eyebrow">Tasks & subjects</p>
-          <h1>Task tracker</h1>
-          <p className="subtitle">Create priorities, set due dates, and organize work by subject.</p>
+          <h1>My Tasks</h1>
+          <p className="subtitle">{new Date().toLocaleDateString(undefined, { weekday: 'long', month: 'long', day: 'numeric' })}</p>
         </div>
-        <div className="filter-toolbar">
-          <select value={filterSubject} onChange={(event) => setFilterSubject(event.target.value)}>
-            <option value="all">All subjects</option>
-            {subjects
-              .filter((subject) => subject.user?.id === user.id)
-              .map((subject) => (
+        <button type="button" className="primary-button new-task-button" onClick={() => setShowForm((current) => !current)}>
+          + New Task
+        </button>
+      </div>
+
+      <div className="tasks-controls">
+        <div className="search-control">
+          <span className="search-icon">🔍</span>
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={(event) => setSearchQuery(event.target.value)}
+            placeholder="Search tasks..."
+          />
+        </div>
+
+        <div className="controls-grid">
+          <label>
+            Subject
+            <select value={filterSubject} onChange={(event) => setFilterSubject(event.target.value)}>
+              <option value="all">All subjects</option>
+              {subjects.filter((subject) => subject.user?.id === user.id).map((subject) => (
                 <option key={subject.id} value={subject.id}>
                   {subject.name}
                 </option>
               ))}
-          </select>
-          <select value={filterPriority} onChange={(event) => setFilterPriority(event.target.value)}>
-            <option value="all">All priorities</option>
-            <option value="URGENT">Urgent</option>
-            <option value="MODERATE">Moderate</option>
-            <option value="CHILL">Chill</option>
-          </select>
-          <button type="button" className="secondary-button" onClick={onReloadTasks}>
-            Refresh
-          </button>
+            </select>
+          </label>
+          <label>
+            Priority
+            <select value={filterPriority} onChange={(event) => setFilterPriority(event.target.value)}>
+              <option value="all">All priorities</option>
+              <option value="URGENT">Urgent</option>
+              <option value="MODERATE">Moderate</option>
+              <option value="CHILL">Chill</option>
+            </select>
+          </label>
+          <label>
+            Status
+            <select value={filterStatus} onChange={(event) => setFilterStatus(event.target.value)}>
+              <option value="all">All statuses</option>
+              <option value="PENDING">To Do</option>
+              <option value="IN_PROGRESS">In Progress</option>
+              <option value="COMPLETED">Done</option>
+            </select>
+          </label>
+          <label>
+            Sort
+            <select value={sortOption} onChange={(event) => setSortOption(event.target.value)}>
+              <option value="dueDate">Due Date</option>
+              <option value="priority">Priority</option>
+              <option value="recent">Recently Added</option>
+            </select>
+          </label>
         </div>
+
+        <button type="button" className="secondary-button add-task-control" onClick={() => setShowForm(true)}>
+          + Add Task
+        </button>
       </div>
 
-      <section className="grid-panel">
-        <div className="task-form card">
-          <h2>{editing ? 'Edit task' : 'Add new task'}</h2>
+      <div className="task-counter">{filteredTasks.length} tasks</div>
+
+      {showForm && (
+        <div className="task-form card task-form-panel">
+          <div className="task-form-header">
+            <div>
+              <h2>{editing ? 'Edit task' : 'Create new task'}</h2>
+              <p className="task-form-subtitle">Set task details, assign a subject, and choose a priority.</p>
+            </div>
+            <button type="button" className="text-button" onClick={() => setShowForm(false)}>
+              Close
+            </button>
+          </div>
           <form onSubmit={handleSubmit}>
             <label>
               Title
@@ -131,24 +218,22 @@ export default function TasksPage({ user, tasks, subjects, onCreateTask, onUpdat
                 name="description"
                 value={taskForm.description}
                 onChange={handleChange}
-                rows="4"
+                rows="3"
                 placeholder="Notes or study details"
               />
             </label>
-            <label>
-              Subject
-              <select name="subjectId" value={taskForm.subjectId} onChange={handleChange}>
-                <option value="">No subject</option>
-                {subjects
-                  .filter((subject) => subject.user?.id === user.id)
-                  .map((subject) => (
+            <div className="form-row">
+              <label>
+                Subject
+                <select name="subjectId" value={taskForm.subjectId} onChange={handleChange}>
+                  <option value="">No subject</option>
+                  {subjects.filter((subject) => subject.user?.id === user.id).map((subject) => (
                     <option key={subject.id} value={subject.id}>
                       {subject.name}
                     </option>
                   ))}
-              </select>
-            </label>
-            <div className="form-row">
+                </select>
+              </label>
               <label>
                 Priority
                 <select name="priority" value={taskForm.priority} onChange={handleChange}>
@@ -160,12 +245,6 @@ export default function TasksPage({ user, tasks, subjects, onCreateTask, onUpdat
                 </select>
               </label>
               <label>
-                Due date
-                <input name="dueDate" type="date" value={taskForm.dueDate} onChange={handleChange} />
-              </label>
-            </div>
-            <div className="form-row">
-              <label>
                 Status
                 <select name="status" value={taskForm.status} onChange={handleChange}>
                   {Object.entries(statusLabels).map(([key, label]) => (
@@ -174,6 +253,10 @@ export default function TasksPage({ user, tasks, subjects, onCreateTask, onUpdat
                     </option>
                   ))}
                 </select>
+              </label>
+              <label>
+                Due date
+                <input name="dueDate" type="date" value={taskForm.dueDate} onChange={handleChange} />
               </label>
             </div>
             <div className="form-actions">
@@ -188,43 +271,51 @@ export default function TasksPage({ user, tasks, subjects, onCreateTask, onUpdat
             </div>
           </form>
         </div>
+      )}
 
-        <div className="task-list card wide-card">
-          <div className="section-title">
+      <section className="task-list-card card">
+        <div className="task-list-header">
+          <div>
             <h2>Task list</h2>
-            <p>{filteredTasks.length} tasks matching your filters</p>
+            <p>Manage everything by subject, priority, and status.</p>
           </div>
+        </div>
+
+        <div className="task-cards">
           {filteredTasks.length ? (
-            <div className="task-grid">
-              {filteredTasks.map((task) => (
-                <article key={task.id} className={`task-card priority-${task.priority.toLowerCase()}`}>
-                  <div className="task-card-top">
-                    <span className="task-priority">{priorityLabels[task.priority]}</span>
-                    <span className={`task-status ${task.status.toLowerCase()}`}>{statusLabels[task.status]}</span>
+            filteredTasks.map((task) => {
+              const subject = subjects.find((subjectItem) => subjectItem.id === task.subject?.id)
+              const indicatorColor = getSubjectColor(subject)
+              const isDone = task.status === 'COMPLETED'
+              return (
+                <article key={task.id} className={`task-card task-card-${task.status.toLowerCase()}`} style={{ borderLeftColor: indicatorColor }}>
+                  <div className="task-card-left">
+                    <span className={`task-status-icon status-${task.status.toLowerCase()}`}>{statusIcon[task.status] || '⚪'}</span>
                   </div>
-                  <h3>{task.title}</h3>
-                  <p>{task.description || 'No description yet.'}</p>
-                  <div className="task-meta">
-                    <span>{task.subject?.name || 'General'}</span>
-                    <span>{task.dueDate ? new Date(task.dueDate).toLocaleDateString() : 'No date'}</span>
-                    <span>{countdownText(task.dueDate)}</span>
+                  <div className="task-card-body">
+                    <div className="task-card-title-row">
+                      <h3 className={isDone ? 'completed-task' : ''}>{task.title}</h3>
+                      <span className={`due-pill due-pill-${task.status.toLowerCase()}`}>{formatDate(task.dueDate)}</span>
+                    </div>
+                    <div className="task-card-meta">
+                      <span className="subject-pill" style={{ background: `${indicatorColor}22`, color: indicatorColor }}>{subject?.name || 'General'}</span>
+                      <span className={`priority-pill priority-pill-${task.priority.toLowerCase()}`}>{priorityLabels[task.priority]}</span>
+                      <span className={`status-pill status-pill-${task.status.toLowerCase()}`}>{statusLabels[task.status]}</span>
+                    </div>
                   </div>
-                  <div className="task-actions">
+                  <div className="task-card-actions">
                     <button type="button" className="secondary-button" onClick={() => handleEdit(task)}>
                       Edit
-                    </button>
-                    <button type="button" className="secondary-button" onClick={() => onCompleteTask(task.id)} disabled={task.status === 'COMPLETED'}>
-                      Complete
                     </button>
                     <button type="button" className="text-button" onClick={() => onDeleteTask(task.id)}>
                       Delete
                     </button>
                   </div>
                 </article>
-              ))}
-            </div>
+              )
+            })
           ) : (
-            <p className="empty-note">No tasks match the current filters. Add a task or select a different subject.</p>
+            <p className="empty-note">No tasks currently match your search or filters.</p>
           )}
         </div>
       </section>

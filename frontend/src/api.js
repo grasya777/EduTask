@@ -14,6 +14,7 @@ export const fetchSubjects = () => client.get('/subjects').then((res) => res.dat
 export const createSubject = (subject) => client.post('/subjects', subject).then((res) => res.data)
 export const updateSubject = (id, subject) => client.put(`/subjects/${id}`, subject).then((res) => res.data)
 export const deleteSubject = (id) => client.delete(`/subjects/${id}`)
+export const fetchUsers = () => client.get('/users').then((res) => res.data)
 
 export const fetchTasks = () => client.get('/tasks').then((res) => res.data)
 export const createTask = (task) => client.post('/tasks', task).then((res) => res.data)

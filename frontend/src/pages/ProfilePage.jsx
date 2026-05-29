@@ -30,14 +30,26 @@ export default function ProfilePage({ user, subjects, onUpdateUser, onCreateSubj
     setSubjectForm((current) => ({ ...current, [name]: value }))
   }
 
+  const [subjectStatus, setSubjectStatus] = useState('')
+  const [subjectError, setSubjectError] = useState('')
+
   const handleAddSubject = async (event) => {
     event.preventDefault()
-    await onCreateSubject({
-      name: subjectForm.name,
-      color: subjectForm.color,
-      user: { id: user.id },
-    })
-    setSubjectForm(initialSubject)
+    setSubjectError('')
+    setSubjectStatus('')
+
+    try {
+      await onCreateSubject({
+        name: subjectForm.name,
+        color: subjectForm.color,
+        user: { id: user.id },
+      })
+      setSubjectForm(initialSubject)
+      setSubjectStatus('Subject added successfully.')
+      window.setTimeout(() => setSubjectStatus(''), 3000)
+    } catch (error) {
+      setSubjectError('Unable to add subject. Please try again.')
+    }
   }
 
   return (
@@ -91,6 +103,8 @@ export default function ProfilePage({ user, subjects, onUpdateUser, onCreateSubj
             <button type="submit" className="primary-button">
               Add subject
             </button>
+            {subjectStatus && <p className="success-text">{subjectStatus}</p>}
+            {subjectError && <p className="error-text">{subjectError}</p>}
           </form>
           <div className="subject-list">
             {subjects.filter((subject) => subject.user?.id === user.id).map((subject) => (
