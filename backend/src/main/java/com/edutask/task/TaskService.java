@@ -2,6 +2,7 @@ package com.edutask.task;
 
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -57,5 +58,23 @@ public class TaskService {
         task.setUpdatedAt(LocalDateTime.now());
 
         return taskRepository.save(task);
+    }
+
+    public List<Task> getTasksDueToday() {
+        return taskRepository.findByDueDate(LocalDate.now());
+    }
+
+    public List<Task> getTasksDueThisWeek() {
+        LocalDate today = LocalDate.now();
+        LocalDate nextWeek = today.plusDays(7);
+
+        return taskRepository.findByDueDateBetween(today, nextWeek);
+    }
+
+    public List<Task> getUpcomingTasks() {
+        return taskRepository.findByDueDateBetween(
+                LocalDate.now(),
+                LocalDate.now().plusDays(30)
+        );
     }
 }

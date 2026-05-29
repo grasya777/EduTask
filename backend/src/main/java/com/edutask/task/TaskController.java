@@ -39,4 +39,19 @@ public class TaskController {
     public Task markCompleted(@PathVariable Long id) {
         return taskService.markCompleted(id);
     }
+
+    @GetMapping("/due-today")
+    public List<Task> getTasksDueToday() {
+        return taskService.getTasksDueToday();
+    }
+
+    @GetMapping("/due-this-week")
+    public List<Task> getTasksDueThisWeek() {
+        return taskService.getTasksDueThisWeek();
+    }
+
+    @GetMapping("/upcoming")
+    public List<Task> getUpcomingTasks() {
+        return taskService.getUpcomingTasks();
+    }
 }
