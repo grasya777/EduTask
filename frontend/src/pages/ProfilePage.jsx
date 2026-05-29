@@ -42,27 +42,30 @@ export default function ProfilePage({ user, subjects, onUpdateUser, onCreateSubj
 
   return (
     <main className="page profile-page">
-      <div className="page-header">
+      <div className="page-header profile-header">
         <div>
           <p className="eyebrow">User profile</p>
           <h1>Account & subjects</h1>
-          <p className="subtitle">Update your program info and manage subject categories with custom colors.</p>
+          <p className="subtitle">Update your account details and organize your subjects with custom color labels.</p>
         </div>
       </div>
 
       <section className="grid-panel">
-        <div className="card profile-card">
-          <h2>Your profile</h2>
+        <div className="card profile-card wide-card">
+          <div className="section-title">
+            <h2>Your profile</h2>
+            <span>Keep your account info current</span>
+          </div>
           <label>
-            Name
+            <span>Name</span>
             <input name="name" value={profile.name || ''} onChange={handleProfileChange} />
           </label>
           <label>
-            Course / Program
+            <span>Course / Program</span>
             <input name="courseProgram" value={profile.courseProgram || ''} onChange={handleProfileChange} />
           </label>
           <label>
-            Email
+            <span>Email</span>
             <input name="email" value={profile.email || ''} disabled />
           </label>
           <button type="button" className="primary-button" onClick={handleSaveProfile}>

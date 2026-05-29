@@ -10,8 +10,18 @@ function countdownText(value) {
   if (!value) return 'No deadline'
   const remaining = Math.ceil((new Date(value) - new Date()) / (1000 * 60 * 60 * 24))
   if (remaining < 0) return 'Overdue'
-  if (remaining === 0) return 'Due today'
-  return `${remaining} day${remaining === 1 ? '' : 's'}`
+  if (remaining === 0) return 'Today'
+  if (remaining === 1) return 'Tomorrow'
+  return `${remaining}d`
+}
+
+function deadlineLabel(value) {
+  if (!value) return 'No date'
+  const remaining = Math.ceil((new Date(value) - new Date()) / (1000 * 60 * 60 * 24))
+  if (remaining < 0) return 'Overdue'
+  if (remaining === 0) return 'Today'
+  if (remaining === 1) return 'Tomorrow'
+  return `${remaining}d`
 }
 
 export default function DashboardPage({ user, tasks, subjects, sessions }) {
@@ -22,12 +32,24 @@ export default function DashboardPage({ user, tasks, subjects, sessions }) {
   const completedTasks = useMemo(() => userTasks.filter((task) => task.status === 'COMPLETED'), [userTasks])
   const pendingTasks = useMemo(() => userTasks.filter((task) => task.status !== 'COMPLETED'), [userTasks])
 
+  const overdueTasks = useMemo(
+    () =>
+      pendingTasks.filter((task) => {
+        if (!task.dueDate) return false
+        const due = new Date(task.dueDate)
+        const today = new Date()
+        const startOfToday = new Date(today.getFullYear(), today.getMonth(), today.getDate())
+        return due < startOfToday
+      }),
+    [pendingTasks],
+  )
+
   const upcomingTasks = useMemo(
     () =>
       pendingTasks
         .filter((task) => task.dueDate)
         .sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate))
-        .slice(0, 4),
+        .slice(0, 5),
     [pendingTasks],
   )
 
@@ -69,123 +91,139 @@ export default function DashboardPage({ user, tasks, subjects, sessions }) {
           ...subject,
           total: subjectTasks.length,
           done,
+          progress: subjectTasks.length ? Math.round((done / subjectTasks.length) * 100) : 0,
         }
       }),
     [userSubjects, userTasks],
   )
 
+  const todayLabel = new Date().toLocaleDateString(undefined, {
+    weekday: 'long',
+    month: 'long',
+    day: 'numeric',
+  })
+
   return (
     <main className="page dashboard-page">
-      <div className="page-header">
+      <section className="dashboard-top">
         <div>
-          <p className="eyebrow">Hello, {user.name}</p>
-          <h1>My dashboard</h1>
-          <p className="subtitle">Track pending tasks, deadlines, progress, and focus time in one place.</p>
-        </div>
-        <div className="stats-grid">
-          <div className="stat-card">
-            <p>Pending tasks</p>
-            <strong>{pendingTasks.length}</strong>
-          </div>
-          <div className="stat-card">
-            <p>Completed tasks</p>
-            <strong>{completedTasks.length}</strong>
-          </div>
-          <div className="stat-card">
-            <p>Active focus sessions</p>
-            <strong>{userSessions.length}</strong>
-          </div>
-        </div>
-      </div>
-
-      <section className="grid-panel">
-        <div className="dashboard-card">
-          <h2>Progress overview</h2>
-          <div className="progress-bar">
-            <div className="progress-value" style={{ width: `${completionPercent}%` }} />
-          </div>
-          <p>{completionPercent}% complete across {userTasks.length} tasks</p>
-          <div className="mini-metrics">
-            <div>
-              <strong>{dueToday.length}</strong>
-              <span>Due today</span>
-            </div>
-            <div>
-              <strong>{dueThisWeek.length}</strong>
-              <span>Due this week</span>
-            </div>
-          </div>
-        </div>
-
-        <div className="dashboard-card upcoming-card">
-          <div className="dashboard-card-header">
-            <h2>Upcoming deadlines</h2>
-            <span>{upcomingTasks.length} tasks</span>
-          </div>
-          {upcomingTasks.length ? (
-            <ul className="deadline-list">
-              {upcomingTasks.map((task) => (
-                <li key={task.id}>
-                  <div>
-                    <strong>{task.title}</strong>
-                    <span>{task.subject?.name || 'No subject'}</span>
-                  </div>
-                  <div>
-                    <span>{formatDate(task.dueDate)}</span>
-                    <strong>{countdownText(task.dueDate)}</strong>
-                  </div>
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <p className="empty-note">No deadlines are approaching yet.</p>
-          )}
+          <p className="eyebrow">Dashboard</p>
+          <h1>Dashboard</h1>
+          <p className="dashboard-date">{todayLabel}</p>
         </div>
       </section>
 
-      <section className="grid-panel">
-        <div className="dashboard-card wide-card">
-          <h2>Weekly / daily overview</h2>
-          <div className="metric-grid">
-            <div className="metric-box">
-              <p>Due today</p>
-              <strong>{dueToday.length}</strong>
-            </div>
-            <div className="metric-box">
-              <p>Due this week</p>
-              <strong>{dueThisWeek.length}</strong>
-            </div>
-            <div className="metric-box">
-              <p>Active subjects</p>
-              <strong>{userSubjects.length}</strong>
-            </div>
-            <div className="metric-box">
-              <p>Focus sessions</p>
-              <strong>{userSessions.length}</strong>
+      <section className="stats-row">
+        <article className="stat-card overview-card">
+          <div className="icon-circle purple">📁</div>
+          <div>
+            <p>Total Tasks</p>
+            <strong>{userTasks.length}</strong>
+          </div>
+        </article>
+        <article className="stat-card overview-card">
+          <div className="icon-circle blue">✅</div>
+          <div>
+            <p>Completed</p>
+            <strong>{completedTasks.length}</strong>
+          </div>
+        </article>
+        <article className="stat-card overview-card">
+          <div className="icon-circle orange">⏳</div>
+          <div>
+            <p>In Progress</p>
+            <strong>{pendingTasks.length}</strong>
+          </div>
+        </article>
+        <article className="stat-card overview-card">
+          <div className="icon-circle red">⚠️</div>
+          <div>
+            <p>Overdue</p>
+            <strong>{overdueTasks.length}</strong>
+          </div>
+        </article>
+      </section>
+
+      <section className="dashboard-grid">
+        <div className="dashboard-card progress-card">
+          <div className="card-header">
+            <span>Overall Progress</span>
+            <strong>{completionPercent}%</strong>
+          </div>
+          <div className="progress-large">{completionPercent}%</div>
+          <div className="progress-track">
+            <div className="progress-fill" style={{ width: `${completionPercent}%` }} />
+          </div>
+          <p className="progress-label">Completion rate</p>
+        </div>
+
+        <div className="dashboard-card due-card">
+          <div className="due-state">
+            <div className="status-badge success">✓</div>
+            <div>
+              <p className="card-label">Due Today</p>
+              {dueToday.length === 0 ? (
+                <strong>All clear for today!</strong>
+              ) : (
+                <strong>{dueToday.length} task{dueToday.length === 1 ? '' : 's'} due</strong>
+              )}
             </div>
           </div>
         </div>
 
-        <div className="dashboard-card wide-card">
-          <div className="dashboard-card-header">
-            <h2>Subject progress</h2>
-            <span>{subjectSummary.length} categories</span>
+        <div className="dashboard-card status-card">
+          <div className="card-header">
+            <span>Status</span>
+            <strong>{overdueTasks.length === 0 ? 'On Track' : 'Attention'}</strong>
           </div>
-          <div className="subject-progress-list">
+          <p>{overdueTasks.length === 0 ? 'No overdue tasks' : `${overdueTasks.length} overdue tasks`}</p>
+        </div>
+      </section>
+
+      <section className="bottom-section">
+        <div className="dashboard-card subject-card-panel">
+          <div className="card-header">
+            <span>Progress by Subject</span>
+            <span>{subjectSummary.length} subjects</span>
+          </div>
+          <div className="subject-list">
             {subjectSummary.length ? (
               subjectSummary.map((subject) => (
-                <div key={subject.id} className="subject-progress-row">
-                  <div>
-                    <span className="subject-chip" style={{ background: subject.color || '#cea5ff' }} />
+                <div key={subject.id} className="subject-row">
+                  <div className="subject-meta">
                     <strong>{subject.name}</strong>
+                    <span>{subject.done}/{subject.total} completed</span>
                   </div>
-                  <div className="subject-progress-meta">
-                    <span>{subject.done}/{subject.total} complete</span>
+                  <div className="subject-bar">
+                    <div className="subject-progress" style={{ width: `${subject.progress}%`, background: subject.color || '#8b5cf6' }} />
                   </div>
                 </div>
               ))
             ) : (
-              <p className="empty-note">Add subjects to track progress by class.</p>
+              <p className="empty-note">Add subjects to see progress bars by class.</p>
+            )}
+          </div>
+        </div>
+
+        <div className="dashboard-card deadline-panel">
+          <div className="card-header">
+            <span>Upcoming Deadlines</span>
+            <span>{upcomingTasks.length} upcoming</span>
+          </div>
+          <div className="deadline-list">
+            {upcomingTasks.length ? (
+              upcomingTasks.map((task) => (
+                <div key={task.id} className="deadline-item">
+                  <span className="deadline-dot" style={{ background: task.subject?.color || '#8b5cf6' }} />
+                  <div className="deadline-info">
+                    <strong>{task.title}</strong>
+                    <span>{task.subject?.name || 'No subject'}</span>
+                  </div>
+                  <span className="deadline-badge">{deadlineLabel(task.dueDate)}</span>
+                </div>
+              ))
+            ) : (
+              <p className="empty-note">No upcoming deadlines. Great job staying ahead.</p>
             )}
           </div>
         </div>
