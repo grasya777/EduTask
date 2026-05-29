@@ -1,5 +1,6 @@
 package com.edutask.task;
 
+import com.edutask.subject.Subject;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -8,7 +9,6 @@ import java.util.List;
 
 @Service
 public class TaskService {
-
     private final TaskRepository taskRepository;
 
     public TaskService(TaskRepository taskRepository) {
@@ -32,7 +32,6 @@ public class TaskService {
 
     public Task updateTask(Long id, Task updatedTask) {
         Task task = taskRepository.findById(id).orElse(null);
-
         if (task == null) return null;
 
         task.setTitle(updatedTask.getTitle());
@@ -40,6 +39,7 @@ public class TaskService {
         task.setPriority(updatedTask.getPriority());
         task.setDueDate(updatedTask.getDueDate());
         task.setSubject(updatedTask.getSubject());
+        task.setStatus(updatedTask.getStatus());
         task.setUpdatedAt(LocalDateTime.now());
 
         return taskRepository.save(task);
@@ -51,7 +51,6 @@ public class TaskService {
 
     public Task markCompleted(Long id) {
         Task task = taskRepository.findById(id).orElse(null);
-
         if (task == null) return null;
 
         task.setStatus(TaskStatus.COMPLETED);
@@ -60,21 +59,29 @@ public class TaskService {
         return taskRepository.save(task);
     }
 
+    public List<Task> getTasksByPriority(Priority priority) {
+        return taskRepository.findByPriority(priority);
+    }
+
+    public List<Task> getTasksByStatus(TaskStatus status) {
+        return taskRepository.findByStatus(status);
+    }
+
+    public List<Task> getTasksBySubject(Subject subject) {
+        return taskRepository.findBySubject(subject);
+    }
+
     public List<Task> getTasksDueToday() {
         return taskRepository.findByDueDate(LocalDate.now());
     }
 
     public List<Task> getTasksDueThisWeek() {
         LocalDate today = LocalDate.now();
-        LocalDate nextWeek = today.plusDays(7);
-
-        return taskRepository.findByDueDateBetween(today, nextWeek);
+        return taskRepository.findByDueDateBetween(today, today.plusDays(7));
     }
 
     public List<Task> getUpcomingTasks() {
-        return taskRepository.findByDueDateBetween(
-                LocalDate.now(),
-                LocalDate.now().plusDays(30)
-        );
+        LocalDate today = LocalDate.now();
+        return taskRepository.findByDueDateBetween(today, today.plusDays(30));
     }
 }

@@ -1,5 +1,6 @@
 package com.edutask.task;
 
+import com.edutask.subject.Subject;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -8,7 +9,6 @@ import java.util.List;
 @RequestMapping("/api/tasks")
 @CrossOrigin(origins = "*")
 public class TaskController {
-
     private final TaskService taskService;
 
     public TaskController(TaskService taskService) {
@@ -38,6 +38,21 @@ public class TaskController {
     @PatchMapping("/{id}/complete")
     public Task markCompleted(@PathVariable Long id) {
         return taskService.markCompleted(id);
+    }
+
+    @GetMapping("/filter/priority/{priority}")
+    public List<Task> getTasksByPriority(@PathVariable Priority priority) {
+        return taskService.getTasksByPriority(priority);
+    }
+
+    @GetMapping("/filter/status/{status}")
+    public List<Task> getTasksByStatus(@PathVariable TaskStatus status) {
+        return taskService.getTasksByStatus(status);
+    }
+
+    @PostMapping("/filter/subject")
+    public List<Task> getTasksBySubject(@RequestBody Subject subject) {
+        return taskService.getTasksBySubject(subject);
     }
 
     @GetMapping("/due-today")
