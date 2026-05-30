@@ -1,6 +1,7 @@
 package com.edutask.task;
 
-import com.edutask.subject.Subject;
+import com.edutask.subject.SubjectRepository;
+import com.edutask.user.UserRepository;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -10,12 +11,24 @@ import java.util.List;
 @Service
 public class TaskService {
     private final TaskRepository taskRepository;
+    private final UserRepository userRepository;
+    private final SubjectRepository subjectRepository;
 
-    public TaskService(TaskRepository taskRepository) {
+    public TaskService(TaskRepository taskRepository, UserRepository userRepository, SubjectRepository subjectRepository) {
         this.taskRepository = taskRepository;
+        this.userRepository = userRepository;
+        this.subjectRepository = subjectRepository;
     }
 
     public Task createTask(Task task) {
+        if (task.getUser() != null && task.getUser().getId() != null) {
+            task.setUser(userRepository.findById(task.getUser().getId()).orElse(null));
+        }
+
+        if (task.getSubject() != null && task.getSubject().getId() != null) {
+            task.setSubject(subjectRepository.findById(task.getSubject().getId()).orElse(null));
+        }
+
         task.setCreatedAt(LocalDateTime.now());
         task.setUpdatedAt(LocalDateTime.now());
 

@@ -1,5 +1,7 @@
 import { useState } from 'react'
 import { loginUser, registerUser } from '../api'
+import Button from '../components/ui/Button.jsx'
+import Input from '../components/ui/Input.jsx'
 
 const initialForm = {
   name: '',
@@ -53,69 +55,50 @@ export default function AuthPage({ onLogin }) {
   }
 
   return (
-    <main className="page auth-page">
-      <div className="auth-header">
-        <div className="auth-brand">EduTask</div>
-        <div className="auth-mode-buttons">
-          <button type="button" className={`mode-button ${mode === 'login' ? 'active' : ''}`} onClick={() => setMode('login')}>
-            Sign in
-          </button>
-          <button type="button" className={`mode-button ${mode === 'register' ? 'active' : ''}`} onClick={() => setMode('register')}>
-            Create account
-          </button>
-        </div>
-      </div>
+    <main className="min-h-screen bg-slate-50 px-4 py-12 sm:px-6 lg:px-8">
+      <div className="mx-auto flex max-w-6xl flex-col gap-10 rounded-[32px] border border-slate-200 bg-white/90 p-8 shadow-soft shadow-slate-900/10 backdrop-blur-sm sm:p-10 lg:flex-row lg:items-center lg:justify-between">
+        <section className="max-w-xl space-y-6">
+          <p className="text-sm font-semibold uppercase tracking-[0.28em] text-sky-500">EduTask</p>
+          <h1 className="text-4xl font-semibold text-slate-950 sm:text-5xl">{mode === 'login' ? 'Welcome back' : 'Start your study flow'}</h1>
+          <p className="max-w-md text-slate-600">{mode === 'login' ? 'Sign in to access your study planner, task board, and Pomodoro focus mode.' : 'Create an account to organize your deadlines, subjects, and focus sessions in one place.'}</p>
+          <div className="inline-flex rounded-3xl bg-slate-100 p-1 text-sm font-semibold text-slate-700">
+            <button
+              type="button"
+              onClick={() => setMode('login')}
+              className={`rounded-3xl px-5 py-3 transition ${mode === 'login' ? 'bg-white shadow' : 'text-slate-500 hover:text-slate-900'}`}
+            >
+              Sign in
+            </button>
+            <button
+              type="button"
+              onClick={() => setMode('register')}
+              className={`rounded-3xl px-5 py-3 transition ${mode === 'register' ? 'bg-white shadow' : 'text-slate-500 hover:text-slate-900'}`}
+            >
+              Register
+            </button>
+          </div>
+        </section>
 
-      <section className="auth-panel card">
-        <div className="auth-intro">
-          <p className="eyebrow">Welcome{mode === 'login' ? ' back!' : '!'}</p>
-          <h1>{mode === 'login' ? 'Welcome back!' : 'Start tracking your tasks today'}</h1>
-          <p className="intro-copy">
-            {mode === 'login'
-              ? 'Sign back in to access your tasks and deadlines.'
-              : 'Create an account to organize your study time, deadlines, and focus sessions.'}
-          </p>
-        </div>
-        <form onSubmit={handleSubmit} className="auth-form">
-          {mode === 'register' && (
-            <>
-              <label>
-                Name
-                <input name="name" value={form.name} onChange={handleChange} placeholder="Your full name" required />
-              </label>
-              <label>
-                Course / Program
-                <input
-                  name="courseProgram"
-                  value={form.courseProgram}
-                  onChange={handleChange}
-                  placeholder="e.g. Computer Science"
-                  required
-                />
-              </label>
-            </>
-          )}
-          <label>
-            Email
-            <input name="email" type="email" value={form.email} onChange={handleChange} placeholder="you@example.com" required />
-          </label>
-          <label>
-            Password
-            <input
-              name="password"
-              type="password"
-              value={form.password}
-              onChange={handleChange}
-              placeholder="Enter a secure password"
-              required
-            />
-          </label>
-          {error && <p className="error-text">{error}</p>}
-          <button type="submit" className="primary-button" disabled={loading}>
-            {loading ? 'Saving...' : mode === 'login' ? 'Login' : 'Register'}
-          </button>
-        </form>
-      </section>
+        <section className="w-full max-w-md rounded-[32px] border border-slate-200 bg-slate-50 p-8 shadow-sm shadow-slate-900/5">
+          <div className="mb-6">
+            <p className="text-sm uppercase tracking-[0.24em] text-slate-500">{mode === 'login' ? 'Sign in' : 'Create account'}</p>
+            <h2 className="mt-3 text-2xl font-semibold text-slate-950">{mode === 'login' ? 'Welcome back' : 'Let’s get you started'}</h2>
+          </div>
+
+          <form onSubmit={handleSubmit} className="space-y-5">
+            {mode === 'register' && (
+              <>
+                <Input label="Full name" name="name" value={form.name} onChange={handleChange} placeholder="Jane Doe" required />
+                <Input label="Course / program" name="courseProgram" value={form.courseProgram} onChange={handleChange} placeholder="Computer Science" required />
+              </>
+            )}
+            <Input label="Email" name="email" type="email" value={form.email} onChange={handleChange} placeholder="you@example.com" required />
+            <Input label="Password" name="password" type="password" value={form.password} onChange={handleChange} placeholder="Enter your password" required />
+            {error && <p className="rounded-3xl bg-rose-50 px-4 py-3 text-sm text-rose-700">{error}</p>}
+            <Button type="submit" variant="primary" className="w-full">{loading ? 'Saving...' : mode === 'login' ? 'Login' : 'Create account'}</Button>
+          </form>
+        </section>
+      </div>
     </main>
   )
 }

@@ -1,4 +1,9 @@
 import { useMemo, useState } from 'react'
+import Button from '../components/ui/Button.jsx'
+import Card from '../components/ui/Card.jsx'
+import Input from '../components/ui/Input.jsx'
+import TextArea from '../components/ui/TextArea.jsx'
+import EmptyState from '../components/ui/EmptyState.jsx'
 
 const initialTask = {
   title: '',
@@ -18,13 +23,11 @@ const priorityLabels = {
 const statusLabels = {
   PENDING: 'To Do',
   COMPLETED: 'Done',
-  IN_PROGRESS: 'In Progress',
 }
 
-const statusIcon = {
-  COMPLETED: '✅',
-  IN_PROGRESS: '⏳',
-  PENDING: '⚪',
+const statusColor = {
+  COMPLETED: 'bg-emerald-100 text-emerald-700',
+  PENDING: 'bg-slate-100 text-slate-700',
 }
 
 export default function TasksPage({ user, tasks, subjects, onCreateTask, onUpdateTask, onDeleteTask, onCompleteTask }) {
@@ -32,37 +35,21 @@ export default function TasksPage({ user, tasks, subjects, onCreateTask, onUpdat
   const [editing, setEditing] = useState(null)
   const [showForm, setShowForm] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
-  const [filterSubject, setFilterSubject] = useState('all')
-  const [filterPriority, setFilterPriority] = useState('all')
-  const [filterStatus, setFilterStatus] = useState('all')
-  const [sortOption, setSortOption] = useState('dueDate')
 
   const userTasks = tasks.filter((task) => task.user?.id === user.id)
 
-  const filteredTasks = useMemo(() => {
-    return userTasks
-      .filter((task) => {
-        const subjectMatch = filterSubject === 'all' || task.subject?.id?.toString() === filterSubject
-        const priorityMatch = filterPriority === 'all' || task.priority === filterPriority
-        const statusMatch = filterStatus === 'all' || task.status === filterStatus
-        const searchMatch = task.title.toLowerCase().includes(searchQuery.toLowerCase()) || task.description.toLowerCase().includes(searchQuery.toLowerCase())
-        return subjectMatch && priorityMatch && statusMatch && searchMatch
-      })
-      .sort((a, b) => {
-        if (sortOption === 'priority') {
-          return a.priority.localeCompare(b.priority)
-        }
-        if (sortOption === 'recent') {
-          return new Date(b.createdAt || b.dueDate || 0) - new Date(a.createdAt || a.dueDate || 0)
-        }
-        if (sortOption === 'dueDate') {
-          if (!a.dueDate) return 1
-          if (!b.dueDate) return -1
-          return new Date(a.dueDate) - new Date(b.dueDate)
-        }
-        return 0
-      })
-  }, [userTasks, searchQuery, filterSubject, filterPriority, filterStatus, sortOption])
+  const filteredTasks = useMemo(
+    () => userTasks.filter((task) => {
+      const query = searchQuery.toLowerCase()
+      return task.title.toLowerCase().includes(query) || task.description.toLowerCase().includes(query)
+    }),
+    [userTasks, searchQuery],
+  )
+
+  const subjectOptions = useMemo(
+    () => subjects.filter((subject) => subject.user?.id === user.id),
+    [subjects, user.id],
+  )
 
   const handleChange = (event) => {
     const { name, value } = event.target
@@ -91,6 +78,7 @@ export default function TasksPage({ user, tasks, subjects, onCreateTask, onUpdat
     } else {
       await onCreateTask(payload)
     }
+
     resetForm()
     setShowForm(false)
   }
@@ -108,217 +96,154 @@ export default function TasksPage({ user, tasks, subjects, onCreateTask, onUpdat
     setShowForm(true)
   }
 
-  const getSubjectColor = (subject) => {
-    if (!subject) return '#7c3aed'
-    return subject.color || {
-      Science: '#10b981',
-      Mathematics: '#2563eb',
-      History: '#ef4444',
-    }[subject.name] || '#7c3aed'
-  }
-
   const formatDate = (date) => {
     if (!date) return 'No date'
-    return new Date(date).toLocaleDateString(undefined, {
-      month: 'short',
-      day: 'numeric',
-    })
+    return new Date(date).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })
   }
 
   return (
-    <main className="page tasks-page">
-      <div className="tasks-header">
-        <div>
-          <p className="eyebrow">Tasks & subjects</p>
-          <h1>My Tasks</h1>
-          <p className="subtitle">{new Date().toLocaleDateString(undefined, { weekday: 'long', month: 'long', day: 'numeric' })}</p>
-        </div>
-        <button type="button" className="primary-button new-task-button" onClick={() => setShowForm((current) => !current)}>
-          + New Task
-        </button>
-      </div>
-
-      <div className="tasks-controls">
-        <div className="search-control">
-          <span className="search-icon">🔍</span>
-          <input
-            type="text"
-            value={searchQuery}
-            onChange={(event) => setSearchQuery(event.target.value)}
-            placeholder="Search tasks..."
-          />
+    <main className="space-y-8">
+      <section className="rounded-[32px] border border-slate-200 bg-white p-8 shadow-soft">
+        <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+          <div>
+            <p className="text-sm uppercase tracking-[0.28em] text-sky-500">Tasks</p>
+            <h1 className="mt-3 text-3xl font-semibold text-slate-950">Manage your study queue</h1>
+            <p className="mt-2 text-slate-600">Create and track tasks with priority, deadlines, and subjects in a single place.</p>
+          </div>
+          <Button variant="primary" onClick={() => setShowForm((current) => !current)}>
+            {showForm ? 'Hide form' : 'Add task'}
+          </Button>
         </div>
 
-        <div className="controls-grid">
-          <label>
-            Subject
-            <select value={filterSubject} onChange={(event) => setFilterSubject(event.target.value)}>
-              <option value="all">All subjects</option>
-              {subjects.filter((subject) => subject.user?.id === user.id).map((subject) => (
-                <option key={subject.id} value={subject.id}>
-                  {subject.name}
-                </option>
-              ))}
-            </select>
-          </label>
-          <label>
-            Priority
-            <select value={filterPriority} onChange={(event) => setFilterPriority(event.target.value)}>
-              <option value="all">All priorities</option>
-              <option value="URGENT">Urgent</option>
-              <option value="MODERATE">Moderate</option>
-              <option value="CHILL">Chill</option>
-            </select>
-          </label>
-          <label>
-            Status
-            <select value={filterStatus} onChange={(event) => setFilterStatus(event.target.value)}>
-              <option value="all">All statuses</option>
-              <option value="PENDING">To Do</option>
-              <option value="IN_PROGRESS">In Progress</option>
-              <option value="COMPLETED">Done</option>
-            </select>
-          </label>
-          <label>
-            Sort
-            <select value={sortOption} onChange={(event) => setSortOption(event.target.value)}>
-              <option value="dueDate">Due Date</option>
-              <option value="priority">Priority</option>
-              <option value="recent">Recently Added</option>
-            </select>
-          </label>
+        <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div className="relative w-full sm:w-80">
+            <input
+              type="search"
+              value={searchQuery}
+              onChange={(event) => setSearchQuery(event.target.value)}
+              placeholder="Search tasks..."
+              className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-900 shadow-sm outline-none transition focus:border-slate-400 focus:bg-white focus:ring-2 focus:ring-slate-200"
+            />
+          </div>
+          <p className="text-sm text-slate-500">{filteredTasks.length} task{filteredTasks.length === 1 ? '' : 's'}</p>
         </div>
-
-        <button type="button" className="secondary-button add-task-control" onClick={() => setShowForm(true)}>
-          + Add Task
-        </button>
-      </div>
-
-      <div className="task-counter">{filteredTasks.length} tasks</div>
+      </section>
 
       {showForm && (
-        <div className="task-form card task-form-panel">
-          <div className="task-form-header">
+        <Card className="space-y-6">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <h2>{editing ? 'Edit task' : 'Create new task'}</h2>
-              <p className="task-form-subtitle">Set task details, assign a subject, and choose a priority.</p>
+              <h2 className="text-xl font-semibold text-slate-950">{editing ? 'Edit task' : 'New task'}</h2>
+              <p className="text-sm text-slate-500">Fill in the details and save your study goal.</p>
             </div>
-            <button type="button" className="text-button" onClick={() => setShowForm(false)}>
-              Close
-            </button>
+            <Button variant="secondary" onClick={() => { resetForm(); setShowForm(false) }}>Cancel</Button>
           </div>
-          <form onSubmit={handleSubmit}>
-            <label>
-              Title
-              <input name="title" value={taskForm.title} onChange={handleChange} required placeholder="Task name" />
-            </label>
-            <label>
-              Description
-              <textarea
-                name="description"
-                value={taskForm.description}
-                onChange={handleChange}
-                rows="3"
-                placeholder="Notes or study details"
-              />
-            </label>
-            <div className="form-row">
-              <label>
-                Subject
-                <select name="subjectId" value={taskForm.subjectId} onChange={handleChange}>
+
+          <form onSubmit={handleSubmit} className="grid gap-5 md:grid-cols-2">
+            <Input label="Title" name="title" value={taskForm.title} onChange={handleChange} placeholder="Task title" required />
+            <Input label="Due date" name="dueDate" type="date" value={taskForm.dueDate} onChange={handleChange} />
+            <TextArea label="Description" name="description" value={taskForm.description} onChange={handleChange} placeholder="Add notes or instructions" />
+            <div className="grid gap-4 sm:grid-cols-3">
+              <div className="grid gap-2 text-sm text-slate-700">
+                <span className="font-medium text-slate-900">Subject</span>
+                <select
+                  name="subjectId"
+                  value={taskForm.subjectId}
+                  onChange={handleChange}
+                  className="h-12 rounded-2xl border border-slate-200 bg-slate-50 px-4 text-slate-900 transition focus:border-slate-400 focus:bg-white focus:ring-2 focus:ring-slate-200"
+                >
                   <option value="">No subject</option>
-                  {subjects.filter((subject) => subject.user?.id === user.id).map((subject) => (
-                    <option key={subject.id} value={subject.id}>
-                      {subject.name}
-                    </option>
+                  {subjectOptions.map((subject) => (
+                    <option key={subject.id} value={subject.id}>{subject.name}</option>
                   ))}
                 </select>
-              </label>
-              <label>
-                Priority
-                <select name="priority" value={taskForm.priority} onChange={handleChange}>
+              </div>
+              <div className="grid gap-2 text-sm text-slate-700">
+                <span className="font-medium text-slate-900">Priority</span>
+                <select
+                  name="priority"
+                  value={taskForm.priority}
+                  onChange={handleChange}
+                  className="h-12 rounded-2xl border border-slate-200 bg-slate-50 px-4 text-slate-900 transition focus:border-slate-400 focus:bg-white focus:ring-2 focus:ring-slate-200"
+                >
                   {Object.entries(priorityLabels).map(([key, label]) => (
-                    <option key={key} value={key}>
-                      {label}
-                    </option>
+                    <option key={key} value={key}>{label}</option>
                   ))}
                 </select>
-              </label>
-              <label>
-                Status
-                <select name="status" value={taskForm.status} onChange={handleChange}>
+              </div>
+              <div className="grid gap-2 text-sm text-slate-700">
+                <span className="font-medium text-slate-900">Status</span>
+                <select
+                  name="status"
+                  value={taskForm.status}
+                  onChange={handleChange}
+                  className="h-12 rounded-2xl border border-slate-200 bg-slate-50 px-4 text-slate-900 transition focus:border-slate-400 focus:bg-white focus:ring-2 focus:ring-slate-200"
+                >
                   {Object.entries(statusLabels).map(([key, label]) => (
-                    <option key={key} value={key}>
-                      {label}
-                    </option>
+                    <option key={key} value={key}>{label}</option>
                   ))}
                 </select>
-              </label>
-              <label>
-                Due date
-                <input name="dueDate" type="date" value={taskForm.dueDate} onChange={handleChange} />
-              </label>
+              </div>
             </div>
-            <div className="form-actions">
-              <button type="submit" className="primary-button">
-                {editing ? 'Save task' : 'Create task'}
-              </button>
+            <div className="md:col-span-2 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+              <Button type="submit" variant="primary" className="w-full sm:w-auto">{editing ? 'Save changes' : 'Add task'}</Button>
               {editing && (
-                <button type="button" className="text-button" onClick={resetForm}>
-                  Cancel
-                </button>
+                <Button type="button" variant="danger" onClick={() => { resetForm(); setShowForm(false) }}>Discard</Button>
               )}
             </div>
           </form>
-        </div>
+        </Card>
       )}
 
-      <section className="task-list-card card">
-        <div className="task-list-header">
-          <div>
-            <h2>Task list</h2>
-            <p>Manage everything by subject, priority, and status.</p>
+      {filteredTasks.length === 0 ? (
+        <EmptyState
+          title="No tasks yet"
+          description="Create your first task to start organizing your study sessions and deadlines."
+          action={<Button variant="primary" onClick={() => setShowForm(true)}>Add your first task</Button>}
+        />
+      ) : (
+        <Card className="space-y-2">
+          <div className="mb-4 pb-4 border-b border-slate-200">
+            <p className="text-sm font-semibold text-slate-700">{filteredTasks.length} task{filteredTasks.length === 1 ? '' : 's'}</p>
           </div>
-        </div>
-
-        <div className="task-cards">
-          {filteredTasks.length ? (
-            filteredTasks.map((task) => {
-              const subject = subjects.find((subjectItem) => subjectItem.id === task.subject?.id)
-              const indicatorColor = getSubjectColor(subject)
+          <div className="space-y-3">
+            {filteredTasks.map((task) => {
+              const taskSubject = subjectOptions.find((subject) => subject.id === task.subject?.id)
               const isDone = task.status === 'COMPLETED'
               return (
-                <article key={task.id} className={`task-card task-card-${task.status.toLowerCase()}`} style={{ borderLeftColor: indicatorColor }}>
-                  <div className="task-card-left">
-                    <span className={`task-status-icon status-${task.status.toLowerCase()}`}>{statusIcon[task.status] || '⚪'}</span>
-                  </div>
-                  <div className="task-card-body">
-                    <div className="task-card-title-row">
-                      <h3 className={isDone ? 'completed-task' : ''}>{task.title}</h3>
-                      <span className={`due-pill due-pill-${task.status.toLowerCase()}`}>{formatDate(task.dueDate)}</span>
+                <div key={task.id} className={`group flex items-start gap-3 rounded-2xl p-4 transition ${isDone ? 'bg-emerald-50' : 'bg-slate-50 hover:bg-slate-100'}`}>
+                  <input
+                    type="checkbox"
+                    checked={isDone}
+                    onChange={() => onCompleteTask(task.id)}
+                    className="mt-1 h-5 w-5 cursor-pointer rounded accent-emerald-600"
+                  />
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-start justify-between gap-3 mb-2">
+                      <div className="flex-1">
+                        <h3 className={`font-semibold text-slate-950 ${isDone ? 'line-through text-slate-500' : ''}`}>{task.title}</h3>
+                        {task.description && (
+                          <p className={`text-sm mt-1 ${isDone ? 'text-slate-400 line-through' : 'text-slate-600'}`}>{task.description}</p>
+                        )}
+                      </div>
+                      <span className="text-xs font-semibold px-2 py-1 rounded-full bg-slate-200 text-slate-700 whitespace-nowrap">{formatDate(task.dueDate)}</span>
                     </div>
-                    <div className="task-card-meta">
-                      <span className="subject-pill" style={{ background: `${indicatorColor}22`, color: indicatorColor }}>{subject?.name || 'General'}</span>
-                      <span className={`priority-pill priority-pill-${task.priority.toLowerCase()}`}>{priorityLabels[task.priority]}</span>
-                      <span className={`status-pill status-pill-${task.status.toLowerCase()}`}>{statusLabels[task.status]}</span>
+                    <div className="flex flex-wrap items-center gap-2 mt-3">
+                      <span className="text-xs px-2 py-1 rounded-full bg-slate-200 text-slate-700">{taskSubject?.name || 'No subject'}</span>
+                      <span className="text-xs px-2 py-1 rounded-full bg-slate-200 text-slate-700">{priorityLabels[task.priority]}</span>
                     </div>
                   </div>
-                  <div className="task-card-actions">
-                    <button type="button" className="secondary-button" onClick={() => handleEdit(task)}>
-                      Edit
-                    </button>
-                    <button type="button" className="text-button" onClick={() => onDeleteTask(task.id)}>
-                      Delete
-                    </button>
+                  <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition">
+                    <button type="button" className="text-sky-600 hover:text-sky-800 text-sm font-semibold" onClick={() => handleEdit(task)}>Edit</button>
+                    <button type="button" className="text-rose-600 hover:text-rose-800 text-sm font-semibold" onClick={() => onDeleteTask(task.id)}>Delete</button>
                   </div>
-                </article>
+                </div>
               )
-            })
-          ) : (
-            <p className="empty-note">No tasks currently match your search or filters.</p>
-          )}
-        </div>
-      </section>
+            })}
+          </div>
+        </Card>
+      )}
     </main>
   )
 }
+

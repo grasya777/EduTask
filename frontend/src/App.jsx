@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react'
-import { BrowserRouter, Link, NavLink, Navigate, Route, Routes } from 'react-router-dom'
+import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 import AuthPage from './pages/AuthPage.jsx'
 import DashboardPage from './pages/DashboardPage.jsx'
 import TasksPage from './pages/TasksPage.jsx'
 import FocusPage from './pages/FocusPage.jsx'
 import ProfilePage from './pages/ProfilePage.jsx'
+import AppShell from './components/layout/AppShell.jsx'
 import {
   fetchFocusSessions,
   fetchSubjects,
@@ -18,7 +19,7 @@ import {
   deleteSubject,
   completeFocusSession,
 } from './api'
-import './App.css'
+import './index.css'
 
 function App() {
   const [currentUser, setCurrentUser] = useState(() => {
@@ -33,11 +34,6 @@ function App() {
   const [sessions, setSessions] = useState([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
-  const [sidebarOpen, setSidebarOpen] = useState(true)
-
-  const toggleSidebar = () => {
-    setSidebarOpen((current) => !current)
-  }
 
   useEffect(() => {
     if (!currentUser) {
@@ -106,16 +102,6 @@ function App() {
     setSessions(latest)
   }
 
-  const userTasks = currentUser ? tasks.filter((task) => task.user?.id === currentUser.id) : []
-  const overdueTaskCount = userTasks.filter((task) => {
-    if (!task.dueDate || task.status === 'COMPLETED') return false
-    const due = new Date(task.dueDate)
-    const today = new Date()
-    const startOfToday = new Date(today.getFullYear(), today.getMonth(), today.getDate())
-    return due < startOfToday
-  }).length
-  const completedTaskCount = userTasks.filter((task) => task.status === 'COMPLETED').length
-
   const handleCreateTask = async (task) => {
     await createTask(task)
     await refreshTasks()
@@ -156,129 +142,60 @@ function App() {
 
   return (
     <BrowserRouter>
-      {currentUser && (
-        <>
-          <header className="topbar">
-            <div className="brand">
-              <Link to="/dashboard">EduTask</Link>
-            </div>
-            <div className="nav-actions">
-              <span>{currentUser.name}</span>
-              <button type="button" className="text-button" onClick={logout}>
-                Sign out
-              </button>
-            </div>
-          </header>
-          <div className="app-shell">
-            <aside className={`side-nav ${sidebarOpen ? 'open' : 'collapsed'}`}>
-              <div className="side-nav-top">
-                <div className="sidebar-brand">
-                  <div className="sidebar-logo">ET</div>
-                  <div>
-                    <p className="sidebar-title">EduTask</p>
-                  </div>
-                </div>
-                <button type="button" className="sidebar-toggle" onClick={toggleSidebar} aria-label={`${sidebarOpen ? 'Collapse' : 'Expand'} menu`}>
-                  <span className="toggle-icon">{sidebarOpen ? '←' : '→'}</span>
-                </button>
-              </div>
-              <nav className="side-nav-links">
-                <NavLink to="/dashboard" className={({ isActive }) => `side-nav-link${isActive ? ' active-nav-item' : ''}`}>
-                  <span className="nav-icon">🏠</span>
-                  <span className="nav-label">Dashboard</span>
-                </NavLink>
-                <NavLink to="/profile" className={({ isActive }) => `side-nav-link${isActive ? ' active-nav-item' : ''}`}>
-                  <span className="nav-icon">👤</span>
-                  <span className="nav-label">Profile</span>
-                </NavLink>
-                <NavLink to="/tasks" className={({ isActive }) => `side-nav-link${isActive ? ' active-nav-item' : ''}`}>
-                  <span className="nav-icon">📋</span>
-                  <span className="nav-label">My Tasks</span>
-                </NavLink>
-                <NavLink to="/focus" className={({ isActive }) => `side-nav-link${isActive ? ' active-nav-item' : ''}`}>
-                  <span className="nav-icon">⏱</span>
-                  <span className="nav-label">Focus</span>
-                </NavLink>
-              </nav>
-              <div className="side-nav-footer">
-                <Link to="/tasks" className="quick-add-button">
-                  <span className="quick-add-icon">+</span>
-                  <span className="quick-add-label">Quick Add Task</span>
-                </Link>
-              </div>
-            </aside>
-            <div className="app-content">
-              {error && <div className="app-alert">{error}</div>}
-              {loading && <div className="app-loading">Loading your study data...</div>}
-              <Routes>
-        <Route path="/auth" element={currentUser ? <Navigate to="/dashboard" replace /> : <AuthPage onLogin={saveUser} />} />
-        <Route
-          path="/dashboard"
-          element={
-            currentUser ? (
-              <DashboardPage user={currentUser} tasks={tasks} subjects={subjects} sessions={sessions} />
-            ) : (
-              <Navigate to="/auth" replace />
-            )
-          }
-        />
-        <Route
-          path="/tasks"
-          element={
-            currentUser ? (
-              <TasksPage
-                user={currentUser}
-                tasks={tasks}
-                subjects={subjects}
-                onCreateTask={handleCreateTask}
-                onUpdateTask={handleUpdateTask}
-                onDeleteTask={handleDeleteTask}
-                onCompleteTask={handleCompleteTask}
-                onReloadTasks={refreshTasks}
-              />
-            ) : (
-              <Navigate to="/auth" replace />
-            )
-          }
-        />
-        <Route
-          path="/focus"
-          element={
-            currentUser ? (
-              <FocusPage user={currentUser} sessions={sessions} onCompleteFocus={handleCompleteFocus} onReloadSessions={refreshSessions} />
-            ) : (
-              <Navigate to="/auth" replace />
-            )
-          }
-        />
-        <Route
-          path="/profile"
-          element={
-            currentUser ? (
-              <ProfilePage
-                user={currentUser}
-                subjects={subjects}
-                onUpdateUser={handleUpdateUser}
-                onCreateSubject={handleCreateSubject}
-                onDeleteSubject={handleDeleteSubject}
-              />
-            ) : (
-              <Navigate to="/auth" replace />
-            )
-          }
-        />
-        <Route path="/" element={<Navigate to={currentUser ? '/dashboard' : '/auth'} replace />} />
-        <Route path="*" element={<Navigate to="/" replace />} />
-      </Routes>
-            </div>
-          </div>
-        </>
-      )}
-      {!currentUser && (
+      {currentUser ? (
+        <AppShell user={currentUser} logout={logout}>
+          <Routes>
+            <Route
+              path="/dashboard"
+              element={
+                <DashboardPage
+                  user={currentUser}
+                  tasks={tasks}
+                  subjects={subjects}
+                  sessions={sessions}
+                  loading={loading}
+                  error={error}
+                />
+              }
+            />
+            <Route
+              path="/tasks"
+              element={
+                <TasksPage
+                  user={currentUser}
+                  tasks={tasks}
+                  subjects={subjects}
+                  onCreateTask={handleCreateTask}
+                  onUpdateTask={handleUpdateTask}
+                  onDeleteTask={handleDeleteTask}
+                  onCompleteTask={handleCompleteTask}
+                />
+              }
+            />
+            <Route
+              path="/focus"
+              element={
+                <FocusPage user={currentUser} sessions={sessions} onCompleteFocus={handleCompleteFocus} onReloadSessions={refreshSessions} />
+              }
+            />
+            <Route
+              path="/profile"
+              element={
+                <ProfilePage
+                  user={currentUser}
+                  subjects={subjects}
+                  onUpdateUser={handleUpdateUser}
+                  onCreateSubject={handleCreateSubject}
+                  onDeleteSubject={handleDeleteSubject}
+                />
+              }
+            />
+            <Route path="*" element={<Navigate to="/dashboard" replace />} />
+          </Routes>
+        </AppShell>
+      ) : (
         <Routes>
-          <Route path="/auth" element={<AuthPage onLogin={saveUser} />} />
-          <Route path="/" element={<Navigate to="/auth" replace />} />
-          <Route path="*" element={<Navigate to="/auth" replace />} />
+          <Route path="*" element={<AuthPage onLogin={saveUser} />} />
         </Routes>
       )}
     </BrowserRouter>
@@ -286,3 +203,4 @@ function App() {
 }
 
 export default App
+
