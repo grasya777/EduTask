@@ -3,6 +3,7 @@ package com.edutask.task;
 import com.edutask.subject.SubjectRepository;
 import com.edutask.user.UserRepository;
 import org.springframework.stereotype.Service;
+import com.edutask.subject.Subject;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;

@@ -83,7 +83,9 @@ export default function DashboardPage({ user, tasks, subjects, sessions, loading
         <Card className="space-y-4">
           <div className="flex items-center justify-between gap-4">
             <p className="text-sm text-slate-500">Total tasks</p>
-            <div className="rounded-2xl bg-sky-100 px-3 py-2 text-sky-700">📁</div>
+            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-sky-100">
+              <img src="/icons/tasks.png" alt="Total tasks" className="h-6 w-6 object-contain" />
+            </div>
           </div>
           <div>
             <p className="text-4xl font-semibold text-slate-950">{userTasks.length}</p>
@@ -93,7 +95,9 @@ export default function DashboardPage({ user, tasks, subjects, sessions, loading
         <Card className="space-y-4">
           <div className="flex items-center justify-between gap-4">
             <p className="text-sm text-slate-500">Completed</p>
-            <div className="rounded-2xl bg-emerald-100 px-3 py-2 text-emerald-700">✅</div>
+            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-100">
+              <img src="/icons/completed.png" alt="Completed tasks" className="h-6 w-6 object-contain" />
+            </div>
           </div>
           <div>
             <p className="text-4xl font-semibold text-slate-950">{completedTasks.length}</p>
@@ -103,7 +107,9 @@ export default function DashboardPage({ user, tasks, subjects, sessions, loading
         <Card className="space-y-4">
           <div className="flex items-center justify-between gap-4">
             <p className="text-sm text-slate-500">In progress</p>
-            <div className="rounded-2xl bg-amber-100 px-3 py-2 text-amber-700">⏳</div>
+            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-amber-100">
+              <img src="/icons/in-progress.png" alt="Tasks in progress" className="h-6 w-6 object-contain" />
+            </div>
           </div>
           <div>
             <p className="text-4xl font-semibold text-slate-950">{pendingTasks.length}</p>
@@ -113,7 +119,9 @@ export default function DashboardPage({ user, tasks, subjects, sessions, loading
         <Card className="space-y-4">
           <div className="flex items-center justify-between gap-4">
             <p className="text-sm text-slate-500">Overdue</p>
-            <div className="rounded-2xl bg-rose-100 px-3 py-2 text-rose-700">⚠️</div>
+            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-rose-100">
+              <img src="/icons/overdue.png" alt="Overdue tasks" className="h-6 w-6 object-contain" />
+            </div>
           </div>
           <div>
             <p className="text-4xl font-semibold text-slate-950">{overdueTasks.length}</p>
