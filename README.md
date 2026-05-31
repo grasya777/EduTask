@@ -1,63 +1,370 @@
-# EduTask 🤓
-Arandela-Galindon OOP Final Project
+# EduTask
 
-## ✨ Description
+### Academic Productivity Platform for Students
 
-EduTask is a student productivity web app designed to help learners organize their academic tasks and manage deadlines in one simple platform. Users can create and categorize tasks by subject, set priorities and due dates, track progress, and stay focused using a built-in Pomodoro timer. With its clean and beginner-friendly interface, EduTask helps students improve productivity, stay organized, and manage their school workload more efficiently. 
+EduTask is a web-based productivity application developed to help students manage academic responsibilities through task organization, subject tracking, deadline monitoring, focus sessions, and progress visualization.
 
------
+The platform centralizes common academic workflows into a single system, allowing students to stay organized and maintain awareness of their academic performance.
 
-# ✨ Features of EduTask
-## 👤 User Account System
-* User registration and login
-* Profile with:  
-    Name  
-    Course/Program  
-* Personal dashboard showing:  
-    Pending tasks  
-    Completed tasks  
-    Upcoming deadlines  
+---
 
-## 📝Task & Subject Tracker
-* Create, edit, and delete tasks
-* Organize tasks by subject or category
-* Add custom labels or colors for subjects
-* Set task priority levels:  
-    Urgent  
-    Moderate  
-    Chill  
-* Add notes or descriptions to tasks
-* Filter tasks by subject or priority
+## Why EduTask?
 
-## 📅Deadline & Reminder System
-* Set due dates for tasks
-* Display countdown until deadline
-* Daily and weekly task overview
-* Show upcoming deadlines on dashboard
+Students often struggle with:
 
-## ⏱️Focus Mode
-* Simple distraction-free study page
-* Pomodoro timer:  
-    25-minute study session  
-    5-minute break timer  
-* Track completed focus sessions
+* Managing multiple subjects simultaneously
+* Keeping track of deadlines
+* Monitoring task completion
+* Maintaining study focus
+* Measuring academic progress
 
-## 📊Progress Tracking
+EduTask addresses these challenges by providing a structured environment where tasks, deadlines, subjects, and focus sessions are managed together.
+
+---
+
+## What Users Can Do
+
+### Organize Subjects
+
+Create academic subjects and categorize tasks under each one.
+
+Examples:
+
+```text
+Object-Oriented Programming
+Database Systems
+Software Engineering
+Web Development
+```
+
+---
+
+### Manage Tasks
+
+Students can:
+
+* Create tasks
+* Edit existing tasks
+* Delete tasks
+* Assign priorities
+* Set due dates
 * Mark tasks as completed
-* View progress bars or completion percentage
-* Display total completed tasks per subject
+
+Supported priorities:
+
+```text
+URGENT
+MODERATE
+CHILL
+```
 
 ---
 
-## 🙏Problem
+### Monitor Deadlines
 
-EduTask solves the problem of students struggling to organize school tasks, track deadlines, and stay focused when studying using multiple or complicated tools. It provides a simple all-in-one platform where users can manage tasks by subject, set priorities and due dates, and monitor progress. With a built-in Pomodoro timer, EduTask helps students stay organized, focused, and productive in a more efficient way.
+EduTask automatically categorizes deadlines into:
+
+* Due Today
+* Due This Week
+* Upcoming Tasks
+
+This allows students to focus on the most urgent academic requirements first.
 
 ---
 
-## 🚀 Competitions
+### Track Productivity
 
-EduTask competes with productivity apps like Microsoft To Do, Google Keep, and Notion. Unlike these general productivity tools, EduTask is designed specifically for students, focusing on academic task management with subject-based organization, deadline tracking, progress monitoring, and a built-in Pomodoro timer. Its simple and beginner-friendly interface makes it easier for students to stay organized and productive without feeling overwhelmed by complex features.
+The dashboard provides a quick summary of:
 
+```text
+Total Tasks
+Pending Tasks
+Completed Tasks
+Completion Percentage
+```
 
+This gives students immediate feedback regarding their workload and productivity.
 
+---
+
+### Record Focus Sessions
+
+EduTask includes a Pomodoro-inspired study tracking system.
+
+Students can record:
+
+```text
+Focus Duration
+Break Duration
+Completion Time
+```
+
+These sessions can later be used to analyze study habits.
+
+---
+
+### Measure Progress
+
+Progress statistics are calculated per subject.
+
+Example:
+
+```text
+Programming
+8 Completed Tasks
+10 Total Tasks
+80% Completion Rate
+```
+
+This helps students identify which subjects require additional attention.
+
+---
+
+## System Architecture
+
+The application follows a layered backend architecture.
+
+```text
+Controller Layer
+      ↓
+Service Layer
+      ↓
+Repository Layer
+      ↓
+Database Layer
+```
+
+This structure improves maintainability, readability, and scalability.
+
+---
+
+## Technology Stack
+
+### Backend
+
+```text
+Java 21
+Spring Boot
+Spring Data JPA
+Hibernate
+Lombok
+```
+
+### Frontend
+
+```text
+React
+React Router
+Axios
+Vite
+```
+
+### Database
+
+```text
+PostgreSQL
+```
+
+---
+
+## Backend Modules
+
+```text
+User Management
+Subject Management
+Task Management
+Deadline Monitoring
+Dashboard Analytics
+Focus Session Tracking
+Progress Tracking
+```
+
+Each module follows the same architecture:
+
+```text
+Controller
+Service
+Repository
+Entity
+```
+
+---
+
+## REST API Modules
+
+### Users
+
+```http
+POST /api/users/register
+POST /api/users/login
+GET  /api/users
+```
+
+### Subjects
+
+```http
+GET    /api/subjects
+POST   /api/subjects
+PUT    /api/subjects/{id}
+DELETE /api/subjects/{id}
+```
+
+### Tasks
+
+```http
+GET    /api/tasks
+POST   /api/tasks
+PUT    /api/tasks/{id}
+DELETE /api/tasks/{id}
+PATCH  /api/tasks/{id}/complete
+```
+
+### Deadlines
+
+```http
+GET /api/tasks/due-today
+GET /api/tasks/due-this-week
+GET /api/tasks/upcoming
+```
+
+### Dashboard
+
+```http
+GET /api/dashboard/summary
+```
+
+### Focus Sessions
+
+```http
+GET    /api/focus
+POST   /api/focus/complete
+DELETE /api/focus/{id}
+```
+
+### Progress Tracking
+
+```http
+GET /api/progress/subjects
+```
+
+---
+
+## Software Engineering Practices
+
+The project applies several Object-Oriented Programming principles:
+
+### Encapsulation
+
+Applied through entity classes such as:
+
+```text
+User
+Task
+Subject
+FocusSession
+```
+
+---
+
+### Abstraction
+
+Business logic is hidden inside service classes:
+
+```text
+UserService
+TaskService
+SubjectService
+DashboardService
+ProgressService
+FocusSessionService
+```
+
+---
+
+### Composition
+
+Relationships between entities:
+
+```text
+Task → User
+Task → Subject
+FocusSession → User
+```
+
+---
+
+## Design Patterns
+
+### Repository Pattern
+
+Used for database operations.
+
+```text
+UserRepository
+TaskRepository
+SubjectRepository
+FocusSessionRepository
+```
+
+### Service Layer Pattern
+
+Used to separate business rules from request handling.
+
+### MVC Pattern
+
+Implemented through:
+
+```text
+Controller
+Service
+Repository
+Entity
+```
+
+### DTO Pattern
+
+Used for dashboard and progress summaries.
+
+```text
+DashboardSummary
+ProgressSummary
+```
+
+---
+
+## Current MVP Scope
+
+Completed:
+
+```text
+User Management
+Subject Management
+Task CRUD Operations
+Task Completion Tracking
+Priority Management
+Deadline APIs
+Dashboard Analytics
+Focus Session Recording
+Progress Tracking
+```
+
+Planned Enhancements:
+
+```text
+JWT Authentication
+Profile Management
+Email Notifications
+Calendar Integration
+Advanced Analytics
+Cloud Deployment
+```
+
+---
+
+## Developed By
+
+EduTask Development Team
+
+National University Laguna
+
+BS Computer Science
