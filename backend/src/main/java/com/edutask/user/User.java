@@ -17,3 +17,9 @@ public class User {
     private String courseProgram;
     private LocalDateTime createdAt;
 }
+
+/*
+ * OOP Concept: Encapsulation
+ * JPA Entity representing a system user.
+ * Stores account and profile information.
+ */

@@ -36,3 +36,10 @@ public class DashboardService {
                 .build();
     }
 }
+
+/*
+ * Design Pattern: Service Layer Pattern
+ * Responsibility: Contains business logic for dashboard summaries.
+ * OOP Principle: Single Responsibility Principle (SRP).
+ * Best Practice: Keeps business logic separate from controllers.
+ */

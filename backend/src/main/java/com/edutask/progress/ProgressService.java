@@ -52,3 +52,9 @@ public class ProgressService {
         return progressList;
     }
 }
+
+/*
+ * Design Pattern: Service Layer Pattern
+ * Responsibility: Calculates completion percentages and progress statistics.
+ * OOP Principle: Single Responsibility Principle (SRP).
+ */

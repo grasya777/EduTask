@@ -13,3 +13,9 @@ public class ProgressSummary {
     private long totalTasks;
     private double completionPercentage;
 }
+
+/*
+ * Design Pattern: DTO Pattern
+ * Responsibility: Represents progress statistics per subject.
+ * OOP Concept: Encapsulation.
+ */

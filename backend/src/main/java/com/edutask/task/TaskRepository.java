@@ -13,3 +13,9 @@ public interface TaskRepository extends JpaRepository<Task, Long> {
     List<Task> findByStatus(TaskStatus status);
     List<Task> findBySubject(Subject subject);
 }
+
+/*
+ * Design Pattern: Repository Pattern
+ * Responsibility: Handles database access for tasks.
+ * Supports CRUD and custom query methods.
+ */

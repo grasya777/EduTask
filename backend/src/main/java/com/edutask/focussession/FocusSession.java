@@ -23,3 +23,10 @@ public class FocusSession {
     @JoinColumn(name = "user_id")
     private User user;
 }
+
+/*
+ * OOP Concept: Encapsulation
+ * JPA Entity representing a completed focus session.
+ * Relationship Mapping: Many focus sessions can belong to one user.
+ * Best Practice: Entity class only stores data.
+ */

@@ -27,3 +27,9 @@ public class UserService {
         return userRepository.findAll();
     }
 }
+
+/*
+ * Design Pattern: Service Layer Pattern
+ * Responsibility: Contains user registration and login logic.
+ * OOP Principle: Single Responsibility Principle (SRP).
+ */

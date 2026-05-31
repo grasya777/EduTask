@@ -19,3 +19,9 @@ public class ProgressController {
         return progressService.getProgressBySubject();
     }
 }
+
+/*
+ * Design Pattern: MVC Controller Pattern
+ * Responsibility: Provides progress tracking endpoints.
+ * Best Practice: Keeps controllers lightweight.
+ */

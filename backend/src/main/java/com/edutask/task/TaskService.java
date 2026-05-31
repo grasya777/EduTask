@@ -99,3 +99,10 @@ public class TaskService {
         return taskRepository.findByDueDateBetween(today, today.plusDays(30));
     }
 }
+
+/*
+ * Design Pattern: Service Layer Pattern
+ * Responsibility: Implements task business logic.
+ * OOP Principle: Single Responsibility Principle (SRP).
+ * Best Practice: Separates logic from controllers.
+ */

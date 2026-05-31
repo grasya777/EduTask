@@ -1,0 +1,368 @@
+EduTask Vibe Coding Context & OOP Implementation Guide
+Project Mindset
+EduTask should feel:
+simple
+clean
+beginner-friendly
+maintainable
+scalable enough for future improvements
+The goal is NOT to create:
+enterprise-level complexity
+microservices
+overly abstract architecture
+The goal IS:
+stable MVP
+readable code
+proper OOP practices
+organized architecture
+smooth frontend-backend separation
+
+Core Development Philosophy
+“Simple First, Scalable Later”
+Before adding complexity, always ask:
+Can this be solved more simply?
+
+
+EduTask Engineering Rules
+1. One Class = One Responsibility
+If a class is doing:
+authentication
+validation
+calculations
+database operations
+at the same time,
+STOP and split it.
+
+2. Controllers Should Stay Thin
+Controllers should only:
+receive requests
+validate request format
+call services
+return responses
+GOOD
+@PostMapping
+public ResponseEntity<?> createTask(
+    @RequestBody TaskRequestDTO request
+) {
+    return ResponseEntity.ok(
+        taskService.createTask(request)
+    );
+}
+
+BAD
+@PostMapping
+public ResponseEntity<?> createTask() {
+
+    validateTask();
+
+    calculateProgress();
+
+    saveToDatabase();
+
+    sendReminder();
+
+    return response;
+}
+
+
+Backend Vibe
+Clean Service-Oriented Structure
+Structure
+controller/
+service/
+repository/
+dto/
+entity/
+config/
+security/
+
+
+Service Layer Rules
+Services contain:
+business logic
+calculations
+validations
+permissions
+Example Responsibilities
+TaskService
+Handles:
+creating tasks
+updating tasks
+completing tasks
+filtering tasks
+NOT:
+authentication
+Pomodoro logic
+
+DashboardService
+Handles:
+task statistics
+progress percentage
+upcoming deadlines
+
+PomodoroService
+Handles:
+timer state
+completed sessions
+focus mode logic
+
+DTO Mindset
+Never expose entities directly
+Entities are internal database models.
+Frontend only receives DTOs.
+
+GOOD
+TaskRequestDTO
+TaskResponseDTO
+DashboardSummaryDTO
+
+
+BAD
+Returning raw entity objects everywhere.
+
+Entity Design Rules
+Entities should:
+stay clean
+represent database structure
+avoid heavy business logic
+
+GOOD
+Task {
+    title
+    dueDate
+    priority
+    status
+}
+
+
+BAD
+Task {
+    calculateDashboard()
+    sendReminder()
+    generateAnalytics()
+}
+
+
+Dependency Injection Vibe
+Always inject dependencies.
+
+GOOD
+@RequiredArgsConstructor
+@Service
+public class TaskService {
+
+    private final TaskRepository repository;
+}
+
+
+BAD
+TaskRepository repository = new TaskRepository();
+
+
+Composition Over Inheritance
+EduTask should avoid deep inheritance.
+
+GOOD
+Task {
+    Priority priority;
+}
+
+
+BAD
+UrgentTask extends Task
+ModerateTask extends Task
+ChillTask extends Task
+
+
+React Frontend Vibe
+Frontend should feel:
+modular
+reusable
+organized
+
+Component Philosophy
+Build Small Reusable Components
+GOOD
+TaskCard
+TaskForm
+SubjectBadge
+PriorityBadge
+DashboardCard
+PomodoroTimer
+
+
+BAD
+Huge pages with:
+API calls
+forms
+business logic
+timers
+filtering
+all inside one component.
+
+React Folder Structure
+components/
+pages/
+hooks/
+context/
+api/
+types/
+utils/
+
+
+API Separation Rule
+All API logic goes into:
+api/
+
+Example:
+taskApi.ts
+authApi.ts
+subjectApi.ts
+
+
+Custom Hook Vibe
+Keep pages clean using hooks.
+GOOD
+useTasks()
+usePomodoro()
+useAuth()
+
+
+State Management Rule
+For MVP:
+✅ Use:
+Context API
+local component state
+❌ Avoid:
+Redux
+overly complex stores
+unless absolutely necessary.
+
+Database Vibe
+Keep relationships simple.
+
+Recommended Relationships
+User
+ ├── Subjects
+ └── Tasks
+
+Subject
+ └── Tasks
+
+
+Validation Philosophy
+Validation belongs in backend services.
+Frontend validation is only for user experience.
+
+Example Validation Rules
+Task
+title required
+due date required
+valid priority required
+User
+unique email
+password minimum length
+
+Naming Convention Rules
+GOOD
+TaskService
+SubjectRepository
+DashboardSummaryDTO
+calculateProgress()
+findUpcomingDeadlines()
+
+
+BAD
+Manager
+Helper
+StuffService
+doThing()
+
+
+MVP Mentality
+Before adding features ask:
+Does this improve the MVP significantly?
+
+If not:
+postpone it
+simplify it
+remove it
+
+Features NOT Needed for MVP
+❌ AI scheduling
+❌ Real-time collaboration
+❌ Calendar syncing
+❌ Microservices
+❌ WebSockets
+❌ Complex notification systems
+❌ Advanced analytics
+
+Recommended Coding Workflow
+Step 1 — Build Backend Foundation
+Build:
+entities
+repositories
+authentication
+task CRUD
+subject CRUD
+
+Step 2 — Build Frontend Pages
+Build:
+login/register
+dashboard
+tasks
+subjects
+Pomodoro page
+
+Step 3 — Connect API
+Use:
+Axios
+DTOs
+clean API layer
+
+Step 4 — Add Filtering & Dashboard Logic
+Then:
+statistics
+progress tracking
+task filtering
+
+Recommended Design Patterns for EduTask
+MUST USE
+1. Service Layer Pattern
+Core architecture.
+
+2. Repository Pattern
+Database abstraction.
+
+3. DTO Pattern
+Frontend/backend separation.
+
+4. Dependency Injection
+Loose coupling.
+
+OPTIONAL LATER
+5. Strategy Pattern
+For:
+sorting
+filtering
+reminder logic
+6. Factory Pattern
+For:
+notification creation
+timer modes
+
+Final EduTask Engineering Vibe
+EduTask should feel:
+✅ clean
+✅ understandable
+✅ maintainable
+✅ modular
+✅ beginner-friendly
+✅ scalable enough for future features
+NOT:
+❌ overengineered
+❌ enterprise-heavy
+❌ abstraction-abuse
+❌ inheritance-heavy
+❌ unnecessarily complex
+

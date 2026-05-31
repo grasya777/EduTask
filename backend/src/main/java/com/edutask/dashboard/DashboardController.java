@@ -18,3 +18,10 @@ public class DashboardController {
         return dashboardService.getDashboardSummary();
     }
 }
+
+/*
+ * Design Pattern: MVC Controller Pattern
+ * Responsibility: Handles HTTP requests related to dashboard data.
+ * Best Practice: Thin Controller - delegates business logic to DashboardService.
+ * OOP Principle: Single Responsibility Principle (SRP).
+ */

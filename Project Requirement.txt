@@ -1,0 +1,640 @@
+# EduTask — Low-Level Requirements (MVP First)
+
+## 1. Project Goal
+
+Build a student productivity web app that helps students manage academic tasks, organize subjects, track deadlines, monitor progress, and stay focused using a Pomodoro timer.
+
+The MVP should prioritize:
+
+1. User registration and login
+2. Subject management
+3. Task management
+4. Deadline tracking
+5. Dashboard summary
+6. Focus mode / Pomodoro timer
+7. Progress tracking
+8. Basic frontend integration
+
+---
+
+# 2. Recommended Technical Stack
+
+## Frontend
+
+* React
+* React Router
+* Axios
+* CSS / TailwindCSS
+* Local state or Context API
+
+## Backend
+
+* Java 21
+* Spring Boot
+* Spring Data JPA
+* Hibernate
+* H2 Database for development
+* PostgreSQL for final database
+* Lombok
+
+## Infrastructure
+
+* REST API architecture
+* Monolithic backend for MVP
+* Local deployment first
+
+---
+
+# 3. Recommended Architecture
+
+Use a clean layered architecture.
+
+```text
+controller/
+service/
+repository/
+entity/
+dto/
+config/
+```
+
+Current EduTask backend structure:
+
+```text
+com.edutask
+├── dashboard
+├── focussession
+├── progress
+├── subject
+├── task
+├── user
+└── EduTaskApplication
+```
+
+---
+
+# 4. Core Domain Model
+
+## Main Entities
+
+### User
+
+Represents a student account.
+
+```java
+User
+- Long id
+- String name
+- String email
+- String password
+- String courseProgram
+- LocalDateTime createdAt
+```
+
+Relationships:
+
+```text
+User
+├── Tasks
+├── Subjects
+└── FocusSessions
+```
+
+---
+
+### Subject
+
+Represents an academic subject/category.
+
+```java
+Subject
+- Long id
+- String name
+- String color
+- User user
+- LocalDateTime createdAt
+```
+
+---
+
+### Task
+
+Represents an academic requirement or activity.
+
+```java
+Task
+- Long id
+- String title
+- String description
+- Priority priority
+- TaskStatus status
+- LocalDate dueDate
+- User user
+- Subject subject
+- LocalDateTime createdAt
+- LocalDateTime updatedAt
+```
+
+---
+
+### FocusSession
+
+Represents a completed Pomodoro/focus session.
+
+```java
+FocusSession
+- Long id
+- int focusMinutes
+- int breakMinutes
+- LocalDateTime completedAt
+- User user
+```
+
+---
+
+# 5. Enumerations
+
+## Priority
+
+```java
+URGENT
+MODERATE
+CHILL
+```
+
+## TaskStatus
+
+```java
+PENDING
+COMPLETED
+```
+
+---
+
+# 6. MVP Scope Prioritization
+
+## PHASE 1 — Backend Setup
+
+Features:
+
+* Create Spring Boot project
+* Add dependencies
+* Configure database
+* Test application run
+
+Requirements:
+
+* Spring Web
+* Spring Data JPA
+* H2 Database
+* PostgreSQL Driver
+* Lombok
+* DevTools
+
+Acceptance Criteria:
+
+* Application runs successfully
+* Database connection works
+* Port 8080 is active
+
+---
+
+## PHASE 2 — User System
+
+Features:
+
+* Register user
+* Login user
+* View users
+* Store course/program
+
+APIs:
+
+```http
+POST /api/users/register
+POST /api/users/login
+GET  /api/users
+```
+
+Validation Rules:
+
+* Email should be unique
+* Password should not be empty
+* Name and course/program should be provided
+
+MVP Simplification:
+
+* Basic login only
+* JWT authentication can be added later
+
+---
+
+## PHASE 3 — Subject Management
+
+Features:
+
+* Create subject
+* Edit subject
+* Delete subject
+* Add subject color/label
+* View all subjects
+
+APIs:
+
+```http
+POST   /api/subjects
+GET    /api/subjects
+PUT    /api/subjects/{id}
+DELETE /api/subjects/{id}
+```
+
+Acceptance Criteria:
+
+* User can create academic subjects
+* Subjects can have colors/labels
+* Subjects can be edited or deleted
+
+---
+
+## PHASE 4 — Task Management
+
+Features:
+
+* Create task
+* Edit task
+* Delete task
+* Mark task as completed
+* Add due date
+* Add priority
+* Assign task to subject
+
+APIs:
+
+```http
+POST   /api/tasks
+GET    /api/tasks
+PUT    /api/tasks/{id}
+DELETE /api/tasks/{id}
+PATCH  /api/tasks/{id}/complete
+```
+
+Validation Rules:
+
+* Task title is required
+* Due date should be valid
+* Priority must be URGENT, MODERATE, or CHILL
+* Status must be PENDING or COMPLETED
+
+---
+
+## PHASE 5 — Deadline System
+
+Features:
+
+* Display due dates
+* Show tasks due today
+* Show tasks due this week
+* Show upcoming deadlines
+
+APIs:
+
+```http
+GET /api/tasks/due-today
+GET /api/tasks/due-this-week
+GET /api/tasks/upcoming
+```
+
+Business Logic:
+
+* Due today uses the current date
+* Due this week checks tasks within 7 days
+* Upcoming deadlines checks tasks within 30 days
+
+---
+
+## PHASE 6 — Dashboard Summary
+
+Features:
+
+* Show pending tasks
+* Show completed tasks
+* Show total tasks
+* Show completion percentage
+
+API:
+
+```http
+GET /api/dashboard/summary
+```
+
+Response Example:
+
+```json
+{
+  "pendingTasks": 3,
+  "completedTasks": 7,
+  "totalTasks": 10,
+  "completionPercentage": 70.0
+}
+```
+
+---
+
+## PHASE 7 — Focus Mode
+
+Features:
+
+* Record completed focus sessions
+* Store focus minutes
+* Store break minutes
+* View all focus sessions
+* Delete focus sessions
+
+APIs:
+
+```http
+POST   /api/focus/complete
+GET    /api/focus
+DELETE /api/focus/{id}
+```
+
+MVP Simplification:
+
+* Timer runs on frontend
+* Backend only saves completed sessions
+
+---
+
+## PHASE 8 — Progress Tracking
+
+Features:
+
+* Calculate completion percentage
+* Show progress per subject
+* Count completed tasks
+* Count total tasks
+
+APIs:
+
+```http
+GET /api/progress/subjects
+```
+
+Response Example:
+
+```json
+[
+  {
+    "subjectName": "Programming",
+    "completedTasks": 5,
+    "totalTasks": 10,
+    "completionPercentage": 50.0
+  }
+]
+```
+
+---
+
+# 7. Frontend Module Breakdown
+
+## Public Pages
+
+```text
+/login
+/register
+```
+
+## Main Pages
+
+```text
+/dashboard
+/tasks
+/subjects
+/focus
+/progress
+/profile
+```
+
+---
+
+# 8. Recommended Frontend Structure
+
+```text
+src/
+├── api/
+├── components/
+│   ├── common/
+│   ├── dashboard/
+│   ├── tasks/
+│   ├── subjects/
+│   ├── focus/
+│   └── progress/
+├── pages/
+├── hooks/
+├── context/
+├── types/
+├── utils/
+└── styles/
+```
+
+---
+
+# 9. State Management Strategy
+
+For MVP, use:
+
+```text
+React local state
+Context API
+```
+
+Avoid Redux unless the project becomes more complex.
+
+---
+
+# 10. Design Patterns Usage
+
+## Repository Pattern
+
+Used in:
+
+```text
+UserRepository
+SubjectRepository
+TaskRepository
+FocusSessionRepository
+```
+
+Purpose:
+
+* Separates database operations from business logic.
+
+---
+
+## Service Layer Pattern
+
+Used in:
+
+```text
+UserService
+SubjectService
+TaskService
+DashboardService
+FocusSessionService
+ProgressService
+```
+
+Purpose:
+
+* Keeps business logic outside controllers.
+* Improves maintainability.
+
+---
+
+## MVC Controller Pattern
+
+Used in:
+
+```text
+UserController
+SubjectController
+TaskController
+DashboardController
+FocusSessionController
+ProgressController
+```
+
+Purpose:
+
+* Handles HTTP requests and responses.
+
+---
+
+## DTO Pattern
+
+Used in:
+
+```text
+DashboardSummary
+ProgressSummary
+```
+
+Purpose:
+
+* Transfers only needed data to the frontend.
+
+---
+
+# 11. OOP Demonstration Mapping
+
+| OOP Principle | EduTask Example                                        |
+| ------------- | ------------------------------------------------------ |
+| Encapsulation | Private fields in User, Task, Subject, FocusSession    |
+| Abstraction   | Service classes hide business logic from controllers   |
+| Inheritance   | Can be added later through a BaseEntity class          |
+| Polymorphism  | Can be applied later for different reminder strategies |
+| Composition   | Task has Subject and User objects                      |
+| Interfaces    | Repository interfaces extend JpaRepository             |
+| Enum Usage    | Priority and TaskStatus prevent invalid values         |
+
+---
+
+# 12. Database Tables
+
+Required MVP tables:
+
+```text
+users
+subjects
+tasks
+focus_sessions
+```
+
+Backend summary/DTO classes do not need their own database tables:
+
+```text
+DashboardSummary
+ProgressSummary
+```
+
+---
+
+# 13. Suggested Sprint Plan
+
+## Sprint 1
+
+* Backend setup
+* Database configuration
+* Entity creation
+* Repository creation
+
+## Sprint 2
+
+* User registration/login
+* Subject CRUD
+* Task CRUD
+
+## Sprint 3
+
+* Deadline endpoints
+* Dashboard summary
+* Progress tracking
+
+## Sprint 4
+
+* Focus session backend
+* API testing
+* Error fixing
+
+## Sprint 5
+
+* React frontend setup
+* Login/register pages
+* Dashboard page
+
+## Sprint 6
+
+* Task manager page
+* Subject tracker page
+* Focus mode page
+* Progress tracker page
+
+---
+
+# 14. MVP Definition of Done
+
+The MVP is complete when:
+
+✅ User can register and login
+✅ User can create subjects
+✅ User can create, edit, delete, and complete tasks
+✅ User can assign tasks to subjects
+✅ User can set due dates and priorities
+✅ Dashboard shows task summary
+✅ Deadline APIs show due today, weekly, and upcoming tasks
+✅ Focus sessions can be saved
+✅ Progress per subject can be displayed
+✅ React frontend connects to backend APIs
+✅ System runs locally
+
+---
+
+# 15. Recommended Simplifications for Academic Success
+
+Avoid for MVP:
+
+* JWT security if time is short
+* Email reminders
+* Push notifications
+* Calendar syncing
+* Complex analytics
+* Real-time collaboration
+
+Prefer:
+
+* Simple REST APIs
+* Clean backend structure
+* H2 for development
+* PostgreSQL for final setup
+* Clear comments explaining OOP and design patterns
+* Working CRUD features before advanced features

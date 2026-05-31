@@ -21,3 +21,10 @@ public class Subject {
 
     private LocalDateTime createdAt;
 }
+
+/*
+ * OOP Concept: Encapsulation
+ * JPA Entity representing an academic subject.
+ * Relationship Mapping: One subject can contain many tasks.
+ * Best Practice: Entity stores data only.
+ */

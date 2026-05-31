@@ -39,3 +39,11 @@ public class Task {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }
+
+/*
+ * OOP Concept: Encapsulation
+ * JPA Entity representing a task.
+ * Relationship Mapping:
+ * - Many tasks belong to one subject.
+ * - Many tasks belong to one user.
+ */

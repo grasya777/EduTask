@@ -70,3 +70,9 @@ public class TaskController {
         return taskService.getUpcomingTasks();
     }
 }
+
+/*
+ * Design Pattern: MVC Controller Pattern
+ * Responsibility: Exposes REST endpoints for task management.
+ * Best Practice: Controller only handles requests and responses.
+ */

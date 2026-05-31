@@ -5,3 +5,9 @@ public enum Priority {
     MODERATE,
     CHILL
 }
+
+/*
+ * Enum Pattern
+ * Represents task priority levels.
+ * Improves type safety over string values.
+ */

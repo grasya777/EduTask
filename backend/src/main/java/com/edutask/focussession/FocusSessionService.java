@@ -25,3 +25,9 @@ public class FocusSessionService {
         focusSessionRepository.deleteById(id);
     }
 }
+
+/*
+ * Design Pattern: Service Layer Pattern
+ * Responsibility: Processes focus session business logic.
+ * OOP Principle: Single Responsibility Principle (SRP).
+ */

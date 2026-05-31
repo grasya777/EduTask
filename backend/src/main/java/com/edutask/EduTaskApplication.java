@@ -9,3 +9,10 @@ public class EduTaskApplication {
         SpringApplication.run(EduTaskApplication.class, args);
     }
 }
+
+/*
+ * Main Spring Boot Application Class
+ * Responsibility: Entry point of the EduTask system.
+ * Design Pattern: Dependency Injection (managed by Spring Framework).
+ * Best Practice: Keeps startup configuration centralized.
+ */

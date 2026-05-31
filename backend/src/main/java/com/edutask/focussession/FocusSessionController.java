@@ -28,3 +28,9 @@ public class FocusSessionController {
         focusSessionService.deleteSession(id);
     }
 }
+
+/*
+ * Design Pattern: MVC Controller Pattern
+ * Responsibility: Exposes REST endpoints for focus sessions.
+ * Best Practice: Delegates processing to FocusSessionService.
+ */

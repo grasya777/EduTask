@@ -50,3 +50,9 @@ public class SubjectService {
         subjectRepository.deleteById(id);
     }
 }
+
+/*
+ * Design Pattern: Service Layer Pattern
+ * Responsibility: Contains business rules for subjects.
+ * OOP Principle: Single Responsibility Principle (SRP).
+ */

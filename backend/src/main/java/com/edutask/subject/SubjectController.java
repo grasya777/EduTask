@@ -33,3 +33,8 @@ public class SubjectController {
         subjectService.deleteSubject(id);
     }
 }
+
+/*
+ * Design Pattern: MVC Controller Pattern
+ * Responsibility: Handles subject-related API requests.
+ */

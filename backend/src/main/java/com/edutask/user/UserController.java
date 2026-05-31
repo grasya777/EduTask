@@ -28,3 +28,8 @@ public class UserController {
         return userService.getAllUsers();
     }
 }
+
+/*
+ * Design Pattern: MVC Controller Pattern
+ * Responsibility: Handles user-related REST API requests.
+ */
