@@ -15,8 +15,8 @@ export default function Sidebar({ user, open, onClose }) {
   const lgPosition = open ? 'lg:relative lg:translate-x-0' : 'lg:absolute lg:top-0 lg:left-0 lg:-translate-x-full'
 
   return (
-    <aside className={`fixed inset-y-0 left-0 z-50 w-72 transform transition duration-300 ${open ? 'translate-x-0' : '-translate-x-full'} bg-slate-900/95 text-white ${lgPosition} lg:min-h-screen lg:bg-white lg:text-slate-900 lg:shadow-sm`}>
-      <div className="flex min-h-screen flex-col border-r border-slate-200 bg-slate-950 px-6 py-6 lg:border-slate-200 lg:bg-white lg:px-5 lg:py-8 text-white lg:text-slate-900">
+    <aside className={`fixed inset-y-0 left-0 z-50 w-72 transform transition duration-300 ${open ? 'translate-x-0' : '-translate-x-full'} bg-slate-900/95 text-white ${lgPosition} lg:min-h-screen lg:bg-gradient-to-b lg:from-white lg:to-blue-50 lg:text-slate-900 lg:shadow-sm`}>
+      <div className="flex min-h-screen flex-col border-r border-slate-200 bg-slate-950 px-6 py-6 lg:border-slate-200 lg:bg-gradient-to-b lg:from-white lg:to-blue-100 lg:px-5 lg:py-8 text-white lg:text-slate-900">
         <div className="flex items-center justify-between gap-4">
           <div>
             <p className="text-xs uppercase tracking-[0.24em] text-sky-400 lg:text-sky-500">EduTask</p>
