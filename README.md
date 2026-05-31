@@ -1,32 +1,45 @@
 # EduTask
 
-### Academic Productivity Platform for Students
+## Student Productivity and Task Management System
 
-EduTask is a web-based productivity application developed to help students manage academic responsibilities through task organization, subject tracking, deadline monitoring, focus sessions, and progress visualization.
+EduTask is a web-based academic productivity application developed to help students organize subjects, manage tasks, monitor deadlines, record focus sessions, and track overall academic progress.
 
-The platform centralizes common academic workflows into a single system, allowing students to stay organized and maintain awareness of their academic performance.
-
----
-
-## Why EduTask?
-
-Students often struggle with:
-
-* Managing multiple subjects simultaneously
-* Keeping track of deadlines
-* Monitoring task completion
-* Maintaining study focus
-* Measuring academic progress
-
-EduTask addresses these challenges by providing a structured environment where tasks, deadlines, subjects, and focus sessions are managed together.
+The system provides a centralized platform where students can manage their academic responsibilities efficiently without relying on multiple productivity tools.
 
 ---
 
-## What Users Can Do
+## Project Overview
 
-### Organize Subjects
+Students often experience difficulties managing multiple requirements, deadlines, projects, and academic responsibilities at the same time.
 
-Create academic subjects and categorize tasks under each one.
+Common challenges include:
+
+* Missing deadlines
+* Forgetting academic requirements
+* Poor task organization
+* Difficulty monitoring progress
+* Lack of study habit tracking
+
+EduTask was developed to address these challenges by providing an organized environment where students can manage their academic workload from a single system.
+
+---
+
+## Key Features
+
+### User Management
+
+The system allows students to:
+
+* Register accounts
+* Login to the system
+* Store profile information
+* Manage academic program details
+
+---
+
+### Subject Management
+
+Students can organize their academic work through subjects.
 
 Examples:
 
@@ -37,20 +50,30 @@ Software Engineering
 Web Development
 ```
 
+Features:
+
+* Create Subject
+* Edit Subject
+* Delete Subject
+* Assign Subject Labels
+
 ---
 
-### Manage Tasks
+### Task Management
 
-Students can:
+The Task Module serves as the core feature of EduTask.
 
-* Create tasks
-* Edit existing tasks
-* Delete tasks
-* Assign priorities
-* Set due dates
-* Mark tasks as completed
+Features:
 
-Supported priorities:
+* Create Tasks
+* Edit Tasks
+* Delete Tasks
+* Mark Tasks as Completed
+* Assign Priorities
+* Set Due Dates
+* Associate Tasks with Subjects
+
+Priority Levels:
 
 ```text
 URGENT
@@ -58,23 +81,34 @@ MODERATE
 CHILL
 ```
 
+Task Status:
+
+```text
+PENDING
+COMPLETED
+```
+
 ---
 
-### Monitor Deadlines
+### Deadline Monitoring
 
-EduTask automatically categorizes deadlines into:
+EduTask automatically categorizes academic requirements according to urgency.
+
+Categories:
 
 * Due Today
 * Due This Week
-* Upcoming Tasks
+* Upcoming Deadlines
 
-This allows students to focus on the most urgent academic requirements first.
+This helps students focus on tasks that require immediate attention.
 
 ---
 
-### Track Productivity
+### Dashboard Summary
 
-The dashboard provides a quick summary of:
+The Dashboard Module provides a quick productivity overview.
+
+Displayed Information:
 
 ```text
 Total Tasks
@@ -83,13 +117,13 @@ Completed Tasks
 Completion Percentage
 ```
 
-This gives students immediate feedback regarding their workload and productivity.
+This allows students to monitor their workload and productivity at a glance.
 
 ---
 
-### Record Focus Sessions
+### Focus Session Tracking
 
-EduTask includes a Pomodoro-inspired study tracking system.
+EduTask includes a Pomodoro-inspired study tracking feature.
 
 Students can record:
 
@@ -99,13 +133,13 @@ Break Duration
 Completion Time
 ```
 
-These sessions can later be used to analyze study habits.
+The purpose of this module is to help students develop productive study habits.
 
 ---
 
-### Measure Progress
+### Progress Tracking
 
-Progress statistics are calculated per subject.
+The Progress Module calculates statistics per subject.
 
 Example:
 
@@ -113,70 +147,68 @@ Example:
 Programming
 8 Completed Tasks
 10 Total Tasks
-80% Completion Rate
+80% Completion Percentage
 ```
 
-This helps students identify which subjects require additional attention.
+This enables students to identify subjects that may require additional attention.
 
 ---
 
-## System Architecture
+# Technology Stack
 
-The application follows a layered backend architecture.
+## Backend
+
+* Java 21
+* Spring Boot
+* Spring Data JPA
+* Hibernate
+* Lombok
+
+## Frontend
+
+* React
+* React Router
+* Axios
+* Vite
+
+## Database
+
+* H2 Database
+
+The project currently uses H2 Database because it integrates directly with Spring Boot and simplifies development and testing.
+
+---
+
+# System Architecture
+
+EduTask follows a layered architecture.
 
 ```text
+Frontend
+    ↓
 Controller Layer
-      ↓
+    ↓
 Service Layer
-      ↓
+    ↓
 Repository Layer
-      ↓
-Database Layer
+    ↓
+H2 Database
 ```
 
-This structure improves maintainability, readability, and scalability.
+Each layer has a dedicated responsibility, making the application easier to maintain and extend.
 
 ---
 
-## Technology Stack
-
-### Backend
+# Backend Modules
 
 ```text
-Java 21
-Spring Boot
-Spring Data JPA
-Hibernate
-Lombok
-```
-
-### Frontend
-
-```text
-React
-React Router
-Axios
-Vite
-```
-
-### Database
-
-```text
-PostgreSQL
-```
-
----
-
-## Backend Modules
-
-```text
-User Management
-Subject Management
-Task Management
-Deadline Monitoring
-Dashboard Analytics
-Focus Session Tracking
-Progress Tracking
+User Module
+Subject Module
+Task Module
+Deadline Module
+Dashboard Module
+Focus Session Module
+Progress Tracking Module
 ```
 
 Each module follows the same architecture:
@@ -190,9 +222,9 @@ Entity
 
 ---
 
-## REST API Modules
+# REST API Endpoints
 
-### Users
+## User Endpoints
 
 ```http
 POST /api/users/register
@@ -200,7 +232,9 @@ POST /api/users/login
 GET  /api/users
 ```
 
-### Subjects
+---
+
+## Subject Endpoints
 
 ```http
 GET    /api/subjects
@@ -209,7 +243,9 @@ PUT    /api/subjects/{id}
 DELETE /api/subjects/{id}
 ```
 
-### Tasks
+---
+
+## Task Endpoints
 
 ```http
 GET    /api/tasks
@@ -219,7 +255,9 @@ DELETE /api/tasks/{id}
 PATCH  /api/tasks/{id}/complete
 ```
 
-### Deadlines
+---
+
+## Deadline Endpoints
 
 ```http
 GET /api/tasks/due-today
@@ -227,13 +265,17 @@ GET /api/tasks/due-this-week
 GET /api/tasks/upcoming
 ```
 
-### Dashboard
+---
+
+## Dashboard Endpoint
 
 ```http
 GET /api/dashboard/summary
 ```
 
-### Focus Sessions
+---
+
+## Focus Session Endpoints
 
 ```http
 GET    /api/focus
@@ -241,7 +283,9 @@ POST   /api/focus/complete
 DELETE /api/focus/{id}
 ```
 
-### Progress Tracking
+---
+
+## Progress Tracking Endpoint
 
 ```http
 GET /api/progress/subjects
@@ -249,41 +293,47 @@ GET /api/progress/subjects
 
 ---
 
-## Software Engineering Practices
+# Object-Oriented Programming Concepts
 
-The project applies several Object-Oriented Programming principles:
+## Encapsulation
 
-### Encapsulation
-
-Applied through entity classes such as:
+Applied in:
 
 ```text
 User
-Task
 Subject
+Task
 FocusSession
 ```
 
+Private fields are protected through getters and setters generated using Lombok.
+
+This protects data integrity and prevents unauthorized modifications.
+
 ---
 
-### Abstraction
+## Abstraction
 
-Business logic is hidden inside service classes:
+Applied through service classes:
 
 ```text
 UserService
-TaskService
 SubjectService
+TaskService
 DashboardService
-ProgressService
 FocusSessionService
+ProgressService
 ```
+
+Business logic is hidden from controllers, allowing controllers to focus only on handling requests and responses.
 
 ---
 
-### Composition
+## Composition
 
-Relationships between entities:
+Implemented through entity relationships.
+
+Examples:
 
 ```text
 Task → User
@@ -291,77 +341,145 @@ Task → Subject
 FocusSession → User
 ```
 
+These relationships model real-world academic activities.
+
 ---
 
-## Design Patterns
+# Design Patterns Used
 
-### Repository Pattern
-
-Used for database operations.
-
-```text
-UserRepository
-TaskRepository
-SubjectRepository
-FocusSessionRepository
-```
-
-### Service Layer Pattern
-
-Used to separate business rules from request handling.
-
-### MVC Pattern
+## Repository Pattern
 
 Implemented through:
 
 ```text
-Controller
-Service
-Repository
-Entity
+UserRepository
+SubjectRepository
+TaskRepository
+FocusSessionRepository
 ```
 
-### DTO Pattern
+Purpose:
 
-Used for dashboard and progress summaries.
+Separates database operations from business logic.
+
+---
+
+## Service Layer Pattern
+
+Implemented through:
+
+```text
+UserService
+SubjectService
+TaskService
+DashboardService
+FocusSessionService
+ProgressService
+```
+
+Purpose:
+
+Centralizes business logic and improves maintainability.
+
+---
+
+## MVC Pattern
+
+Implemented throughout the application.
+
+```text
+Controller
+    ↓
+Service
+    ↓
+Repository
+    ↓
+Database
+```
+
+Purpose:
+
+Separates concerns and improves code organization.
+
+---
+
+## DTO Pattern
+
+Implemented through:
 
 ```text
 DashboardSummary
 ProgressSummary
 ```
 
+Purpose:
+
+Transfers only the data required by the frontend without exposing complete entities.
+
 ---
 
-## Current MVP Scope
+# Software Engineering Best Practices
 
-Completed:
+### Separation of Concerns
+
+Responsibilities are divided among:
+
+* Controllers
+* Services
+* Repositories
+* Entities
+* DTOs
+
+---
+
+### Single Responsibility Principle
+
+Each class is responsible for one primary task.
+
+Examples:
+
+* Controllers handle requests
+* Services handle business logic
+* Repositories access data
+* Entities represent data
+* DTOs transfer data
+
+---
+
+# Current MVP Scope
+
+Implemented Features:
 
 ```text
 User Management
 Subject Management
 Task CRUD Operations
+Task Prioritization
 Task Completion Tracking
-Priority Management
-Deadline APIs
-Dashboard Analytics
+Deadline Monitoring
+Dashboard Summary
 Focus Session Recording
 Progress Tracking
 ```
 
-Planned Enhancements:
+---
 
-```text
-JWT Authentication
-Profile Management
-Email Notifications
-Calendar Integration
-Advanced Analytics
-Cloud Deployment
-```
+# Future Enhancements
+
+Planned improvements include:
+
+* JWT Authentication
+* BCrypt Password Encryption
+* Profile Management
+* Calendar Integration
+* Notifications
+* Advanced Analytics
+* Mobile Responsive Design
+* Cloud Deployment
 
 ---
 
-## Developed By
+# Development Team
 
-Arandela, Jherrymei D.
-Galindon, Lynette Grace L.
+Jherrymei D. Arandela
+Lynette Grace L. Galindon
