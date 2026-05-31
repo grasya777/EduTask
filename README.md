@@ -363,8 +363,5 @@ Cloud Deployment
 
 ## Developed By
 
-EduTask Development Team
-
-National University Laguna
-
-BS Computer Science
+Arandela, Jherrymei D.
+Galindon, Lynette Grace L.
