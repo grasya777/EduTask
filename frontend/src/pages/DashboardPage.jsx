@@ -1,6 +1,11 @@
 import { useMemo } from 'react'
 import Card from '../components/ui/Card.jsx'
 import EmptyState from '../components/ui/EmptyState.jsx'
+import completedIcon from '../assets/completed.png'
+import totalIcon from '../assets/total.png'
+import inProgressIcon from '../assets/in progess.png'
+import overdueIcon from '../assets/overdue.png'
+import upcomingIcon from '../assets/upcoming.png'
 
 function formatDate(value) {
   if (!value) return 'No date'
@@ -84,7 +89,7 @@ export default function DashboardPage({ user, tasks, subjects, sessions, loading
           <div className="flex items-center justify-between gap-4">
             <p className="text-sm text-slate-500">Total tasks</p>
             <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-sky-100">
-              <img src="/icons/tasks.png" alt="Total tasks" className="h-6 w-6 object-contain" />
+              <img src={totalIcon} alt="Total tasks" className="h-6 w-6 object-contain" />
             </div>
           </div>
           <div>
@@ -96,7 +101,7 @@ export default function DashboardPage({ user, tasks, subjects, sessions, loading
           <div className="flex items-center justify-between gap-4">
             <p className="text-sm text-slate-500">Completed</p>
             <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-100">
-              <img src="/icons/completed.png" alt="Completed tasks" className="h-6 w-6 object-contain" />
+              <img src={completedIcon} alt="Completed tasks" className="h-6 w-6 object-contain" />
             </div>
           </div>
           <div>
@@ -108,7 +113,7 @@ export default function DashboardPage({ user, tasks, subjects, sessions, loading
           <div className="flex items-center justify-between gap-4">
             <p className="text-sm text-slate-500">In progress</p>
             <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-amber-100">
-              <img src="/icons/in-progress.png" alt="Tasks in progress" className="h-6 w-6 object-contain" />
+              <img src={inProgressIcon} alt="Tasks in progress" className="h-6 w-6 object-contain" />
             </div>
           </div>
           <div>
@@ -120,7 +125,7 @@ export default function DashboardPage({ user, tasks, subjects, sessions, loading
           <div className="flex items-center justify-between gap-4">
             <p className="text-sm text-slate-500">Overdue</p>
             <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-rose-100">
-              <img src="/icons/overdue.png" alt="Overdue tasks" className="h-6 w-6 object-contain" />
+              <img src={overdueIcon} alt="Overdue tasks" className="h-6 w-6 object-contain" />
             </div>
           </div>
           <div>
@@ -205,7 +210,12 @@ export default function DashboardPage({ user, tasks, subjects, sessions, loading
               <p className="text-sm text-slate-500">Upcoming tasks</p>
               <h2 className="text-xl font-semibold text-slate-950">Next deadlines</h2>
             </div>
-            <span className="rounded-3xl bg-slate-100 px-3 py-2 text-sm text-slate-700">{upcomingTasks.length} items</span>
+            <div className="flex items-center gap-3">
+              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-slate-100">
+                <img src={upcomingIcon} alt="Upcoming tasks" className="h-6 w-6 object-contain" />
+              </div>
+              <span className="rounded-3xl bg-slate-100 px-3 py-2 text-sm text-slate-700">{upcomingTasks.length} items</span>
+            </div>
           </div>
           {upcomingTasks.length ? (
             <div className="space-y-4">
